@@ -6,15 +6,23 @@ import JsonView from './jsonview/container'
 import Manage from './map/container'
 import Map from './map/container'
 
+import './App.css'
+
 
 class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <div className="App">
-          <Map />
-          <Manage />
-          <JsonView />
+        <div className={`container`}>
+          <div className={'row'}>
+            <div className={'col'}>
+              <Map />
+              <Manage />
+            </div>
+            <div className={'col'}>
+              <JsonView />
+            </div>
+          </div>
         </div>
       </Provider>
     );
