@@ -10,13 +10,21 @@ export default class Map extends React.Component {
             <div>
                 <h2>Map</h2>
                 <div ref='map' className={'map'}>I should be a map!</div>
-                <Button onClick={this.drawPolygon}>Polygon</Button>
+                <Button onClick={this.startPolygon}>Polygon</Button>
             </div>
         )
     }
 
-    drawPolygon = () => {
+    startPolygon = () => {
+        this.drawingManager.setMap(this.map)
         this.drawingManager.setDrawingMode(g.maps.drawing.OverlayType.POLYGON)
+    }
+
+    completePolygon = (polygon) => {
+        const coordinates = polygon.getPath().getArray()
+        const precise = coordinates.map(c => ({lat: c.lat(), lng: c.lng()}))
+        this.props.setPolygon(precise)
+        this.drawingManager.setMap(null)
     }
     
     componentDidMount() {
@@ -34,7 +42,14 @@ export default class Map extends React.Component {
             position: g.maps.ControlPosition.TOP_CENTER,
             drawingModes: ['polygon', 'polyline']
           },
+          polygonOptions: {
+              fillColor: '#ffff00',
+              strokeColor: 'green',
+            //   editable: true
+          }
         })
         this.drawingManager.setMap(this.map)
+
+        g.maps.event.addListener(this.drawingManager, 'polygoncomplete', this.completePolygon)
     }
 }

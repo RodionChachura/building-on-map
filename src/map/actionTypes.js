@@ -1,0 +1,1 @@
+export const SET_POLYGON = 'SET_POLYGON'
