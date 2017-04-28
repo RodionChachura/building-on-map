@@ -1,4 +1,7 @@
 import React from 'react'
+import {Button} from 'reactstrap'
+const g = window.google
+
 import './styles.css'
 
 export default class Map extends React.Component {
@@ -6,18 +9,32 @@ export default class Map extends React.Component {
         return (
             <div>
                 <h2>Map</h2>
-                <div ref="map" className={'map'}>I should be a map!</div>
+                <div ref='map' className={'map'}>I should be a map!</div>
+                <Button onClick={this.drawPolygon}>Polygon</Button>
             </div>
         )
     }
+
+    drawPolygon = () => {
+        this.drawingManager.setDrawingMode(g.maps.drawing.OverlayType.POLYGON)
+    }
     
     componentDidMount() {
-        this.map = new window.google.maps.Map(this.refs.map, {
+        this.map = new g.maps.Map(this.refs.map, {
             center: {lat: 53.9145899, lng: 27.5594437},
             zoom: 18,
             mapTypeControl: false,
             panControl: false,
             streetViewControl: false,
         })
+
+        this.drawingManager = new g.maps.drawing.DrawingManager({
+          drawingControl: false,
+          drawingControlOptions: {
+            position: g.maps.ControlPosition.TOP_CENTER,
+            drawingModes: ['polygon', 'polyline']
+          },
+        })
+        this.drawingManager.setMap(this.map)
     }
 }
