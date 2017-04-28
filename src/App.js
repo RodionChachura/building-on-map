@@ -15,11 +15,11 @@ class App extends Component {
       <Provider store={store}>
         <div className={`container`}>
           <div className={'row'}>
-            <div className={'col'}>
+            <div className={'col-8'}>
               <Map />
               <Manage />
             </div>
-            <div className={'col'}>
+            <div className={'col-4'}>
               <JsonView />
             </div>
           </div>

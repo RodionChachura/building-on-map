@@ -1,5 +1,6 @@
-.map {
-  height: 100%; }
-
-.map h2 {
+h2 {
   text-align: center; }
+
+.map {
+  height: 400px;
+  width: 600px; }
