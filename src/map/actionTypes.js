@@ -1,3 +1,3 @@
 export const SET_POLYGON = 'SET_POLYGON'
-//export const ADD_EXIT = 'ADD_EXIT'
-//export const ADD_ENTER = 'ADD_ENTER'
+export const SET_EXITS = 'SET_EXITS'
+export const SET_ENTERS = 'SET_ENTERS'
