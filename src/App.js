@@ -5,8 +5,6 @@ import store from './store'
 import JsonView from './jsonview/container'
 import Map from './map/container'
 
-import './App.css'
-
 class App extends Component {
   render() {
     return (

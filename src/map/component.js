@@ -120,12 +120,10 @@ export default class Map extends React.Component {
             updatePolygon()
             this.setState({polygon})
             this.drawingManager.setMap(null)
-            g.maps.event.addListener(path, 'insert_at', () => {
-                updatePolygon()
-            })
-            g.maps.event.addListener(path, 'set_at', () => {
-                updatePolygon()
-            })
+
+            g.maps.event.addListener(path, 'insert_at', updatePolygon)
+            g.maps.event.addListener(path, 'set_at', updatePolygon)
+            g.maps.event.addListener(path, 'remove_at', updatePolygon)
         })
     }
 }
