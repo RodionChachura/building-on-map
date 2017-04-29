@@ -3,11 +3,9 @@ import { Provider } from 'react-redux';
 
 import store from './store'
 import JsonView from './jsonview/container'
-import Manage from './manage/container'
 import Map from './map/container'
 
 import './App.css'
-
 
 class App extends Component {
   render() {
@@ -15,11 +13,10 @@ class App extends Component {
       <Provider store={store}>
         <div className={`container`}>
           <div className={'row'}>
-            <div className={'col'}>
+            <div className={'col-12 col-lg-8'}>
               <Map />
-              <Manage />
             </div>
-            <div className={'col'}>
+            <div className={'col-4'}>
               <JsonView />
             </div>
           </div>

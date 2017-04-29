@@ -2,9 +2,11 @@ import React from 'react'
 
 import './styles.css'
 
-export default () => (
+const prettyJson = (obj) => JSON.stringify(obj, null, 2)
+
+export default (props) => (
     <div className={'jsonview'}>
         <h2>JSON output</h2>
-        <textarea rows="10"></textarea>
+        <div><pre>{prettyJson(props.value)}</pre></div>
     </div>
 )

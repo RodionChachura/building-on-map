@@ -1,6 +1,16 @@
+h2 {
+    text-align: center;
+}
 .map {
-    height: 100%;
-    h2 {
-        text-align: center;
+    height: 400px;
+    width: 100%;
+}
+
+.manage {
+    padding: 20px;
+
+    .btn {
+        border-color: white;
+        color: 'red';
     }
 }
