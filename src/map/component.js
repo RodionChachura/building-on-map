@@ -8,6 +8,7 @@ import './styles.css'
 const polygonOptions = {
     fillColor: '#ffff00',
     strokeColor: 'green',
+    draggable: true,
     editable: true
 }
 
@@ -16,11 +17,11 @@ const polylineOptions = {
 }
 
 const enterPolylineOptions = {
-    strokeColor: 'blue'
+    strokeColor: 'blue',
 }
 
 const exitPolylineOptions = {
-    strokeColor: 'red'
+    strokeColor: 'red',
 }
 
 const mapOptions = {
@@ -73,7 +74,7 @@ export default class Map extends React.Component {
             const coordinates = polyline.getPath().getArray().slice(0, 2)
             const precise = inLatLng(coordinates)
             addPolylineCallback(precise)
-            this.drawingManager.setMap(null)        
+            this.drawingManager.setMap(null)
         })
     }
 
@@ -110,11 +111,21 @@ export default class Map extends React.Component {
         this.drawingManager.setMap(this.map)
 
         g.maps.event.addListener(this.drawingManager, 'polygoncomplete', (polygon) => {
-            const coordinates = polygon.getPath().getArray()
-            const precise = inLatLng(coordinates)
-            this.props.setPolygon(precise)
+            const path = polygon.getPath()
+            const updatePolygon = () => {
+                const coordinates = path.getArray()
+                const precise = inLatLng(coordinates)
+                this.props.setPolygon(precise)
+            }
+            updatePolygon()
             this.setState({polygon})
             this.drawingManager.setMap(null)
+            g.maps.event.addListener(path, 'insert_at', () => {
+                updatePolygon()
+            })
+            g.maps.event.addListener(path, 'set_at', () => {
+                updatePolygon()
+            })
         })
     }
 }
