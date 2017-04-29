@@ -3,5 +3,14 @@ h2 {
 }
 .map {
     height: 400px;
-    width: 600px;
+    width: 100%;
+}
+
+.manage {
+    padding: 20px;
+
+    .btn {
+        border-color: white;
+        color: 'red';
+    }
 }

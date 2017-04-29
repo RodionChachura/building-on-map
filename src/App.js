@@ -13,7 +13,7 @@ class App extends Component {
       <Provider store={store}>
         <div className={`container`}>
           <div className={'row'}>
-            <div className={'col-8'}>
+            <div className={'col-12 col-lg-8'}>
               <Map />
             </div>
             <div className={'col-4'}>
