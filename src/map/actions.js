@@ -5,6 +5,12 @@ export const setPolygon = (coordinates) => ({
     payload: coordinates
 })
 
-export const addExit = (coordinates) => {
-    
-}
+export const setEnters = (enters) => ({
+    type: t.SET_ENTERS,
+    payload: enters
+})
+
+export const setExits = (exits) => ({
+    type: t.SET_EXITS,
+    payload: exits
+})

@@ -16,7 +16,7 @@ class App extends Component {
             <div className={'col-12 col-lg-8'}>
               <Map />
             </div>
-            <div className={'col-4'}>
+            <div className={'col-12 col-lg-4'}>
               <JsonView />
             </div>
           </div>

@@ -1,7 +1,7 @@
 import component from './component'
 import { connect } from 'react-redux';
 
-import { setPolygon } from './actions'
+import { setPolygon, setEnters, setExits } from './actions'
 
 const mapStateToProps = (state) => {
   return {}
@@ -9,7 +9,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setPolygon: (coordinates) => {dispatch(setPolygon(coordinates))}
+    setPolygon: (coordinates) => {dispatch(setPolygon(coordinates))},
+    setEnters: (enters) => {dispatch(setEnters(enters))},
+    setExits: (exits) => {dispatch(setExits(exits))},    
   }
 }
 

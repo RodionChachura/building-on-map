@@ -5,13 +5,42 @@ const g = window.google
 import './styles.css'
 
 
+const polygonOptions = {
+    fillColor: '#ffff00',
+    strokeColor: 'green',
+    draggable: true,
+    editable: true
+}
+
+const polylineOptions = {
+    editable: true
+}
+
+const enterPolylineOptions = {
+    strokeColor: 'blue',
+}
+
+const exitPolylineOptions = {
+    strokeColor: 'red',
+}
+
+const mapOptions = {
+    center: {lat: 53.9145899, lng: 27.5594437},
+    zoom: 18,
+    mapTypeControl: false,
+    panControl: false,
+    streetViewControl: false,
+}
+
+const inLatLng = coordinates => coordinates.map(c => ({lat: c.lat(), lng: c.lng()}))
+
 export default class Map extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             polygon: null,
-            enters: null,
-            exits: null
+            enters: [],
+            exits: []
         }
     }
     
@@ -19,7 +48,7 @@ export default class Map extends React.Component {
         return (
             <div>
                 <h2>Map</h2>
-                <div ref='map' className={'map'}>I should be a map!</div>
+                <div ref='map' className={'map'}></div>
                 <div className={'row justify-content-center manage'}>
                     <ButtonGroup>
                         <Button color='info' hidden={this.state.polygon} onClick={this.startPolygon}>Polygon</Button>
@@ -34,7 +63,35 @@ export default class Map extends React.Component {
 
     startPolygon = (e) => {
         this.drawingManager.setMap(this.map)
-        this.drawingManager.setDrawingMode(g.maps.drawing.OverlayType.POLYGON)
+        this.drawingManager.setDrawingMode(g.maps.drawing.OverlayType.POLYGON)        
+    }
+
+    startPolyline = (options, addPolylineCallback) => {
+        this.drawingManager.setMap(this.map)
+        this.drawingManager.setDrawingMode(g.maps.drawing.OverlayType.POLYLINE)
+        this.drawingManager.setOptions({polylineOptions: options})
+        g.maps.event.addListenerOnce(this.drawingManager, 'polylinecomplete', (polyline) => {
+            const coordinates = polyline.getPath().getArray().slice(0, 2)
+            const precise = inLatLng(coordinates)
+            addPolylineCallback(precise)
+            this.drawingManager.setMap(null)
+        })
+    }
+
+    startEnter = () => {
+        this.startPolyline(enterPolylineOptions, (enter) => {
+            const enters = [...this.state.enters, {enter}]
+            this.setState({enters})
+            this.props.setEnters(enters)
+        })
+    }
+
+    startExit = () => {
+        this.startPolyline(exitPolylineOptions, (exit) => {
+            const exits = [...this.state.exits, {exit}]
+            this.setState({exits})
+            this.props.setExits(exits)
+        })
     }
 
     deletePolygon = (e) => {
@@ -43,37 +100,32 @@ export default class Map extends React.Component {
         this.props.setPolygon([])
     }
 
-    completePolygon = (polygon) => {
-        const coordinates = polygon.getPath().getArray()
-        const precise = coordinates.map(c => ({lat: c.lat(), lng: c.lng()}))
-        this.props.setPolygon(precise)
-        this.setState({polygon})
-        this.drawingManager.setMap(null)
-    }
-    
     componentDidMount() {
-        this.map = new g.maps.Map(this.refs.map, {
-            center: {lat: 53.9145899, lng: 27.5594437},
-            zoom: 18,
-            mapTypeControl: false,
-            panControl: false,
-            streetViewControl: false,
-        })
+        this.map = new g.maps.Map(this.refs.map, mapOptions)
 
         this.drawingManager = new g.maps.drawing.DrawingManager({
-          drawingControl: false,
-          drawingControlOptions: {
-            position: g.maps.ControlPosition.TOP_CENTER,
-            drawingModes: ['polygon', 'polyline']
-          },
-          polygonOptions: {
-              fillColor: '#ffff00',
-              strokeColor: 'green',
-            //   editable: true
-          }
+            drawingControl: false,
+            polygonOptions,
+            polylineOptions
         })
         this.drawingManager.setMap(this.map)
 
-        g.maps.event.addListener(this.drawingManager, 'polygoncomplete', this.completePolygon)
+        g.maps.event.addListener(this.drawingManager, 'polygoncomplete', (polygon) => {
+            const path = polygon.getPath()
+            const updatePolygon = () => {
+                const coordinates = path.getArray()
+                const precise = inLatLng(coordinates)
+                this.props.setPolygon(precise)
+            }
+            updatePolygon()
+            this.setState({polygon})
+            this.drawingManager.setMap(null)
+            g.maps.event.addListener(path, 'insert_at', () => {
+                updatePolygon()
+            })
+            g.maps.event.addListener(path, 'set_at', () => {
+                updatePolygon()
+            })
+        })
     }
 }
