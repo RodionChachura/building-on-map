@@ -57,6 +57,9 @@ export default class Map extends React.Component {
                         <Button color='info' onClick={this.startExit}>Exit</Button>
                     </ButtonGroup>
                 </div>
+                <footer className={'row justify-content-center'}>
+                    click twice to finish enter or exit
+                </footer>
             </div>
         )
     }
@@ -72,6 +75,7 @@ export default class Map extends React.Component {
         this.drawingManager.setOptions({polylineOptions: options})
         g.maps.event.addListenerOnce(this.drawingManager, 'polylinecomplete', (polyline) => {
             const coordinates = polyline.getPath().getArray().slice(0, 2)
+            polyline.setPath(coordinates)
             const precise = inLatLng(coordinates)
             addPolylineCallback(precise)
             this.drawingManager.setMap(null)
