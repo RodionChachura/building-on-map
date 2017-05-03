@@ -3,7 +3,8 @@ import * as t from './actionTypes'
 const initialState = {
     polygon: [],
     enters: [],
-    exits: []
+    exits: [],
+    center: null,
 }
 
 export default (state = initialState, action) => {
@@ -16,6 +17,9 @@ export default (state = initialState, action) => {
         }
         case t.SET_EXITS: {
             return {...state, exits: action.payload}
+        }
+        case t.SET_CENTER: {
+            return {...state, center: action.payload}
         }
         default:
             return state
