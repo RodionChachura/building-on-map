@@ -32,7 +32,7 @@ const mapOptions = {
     streetViewControl: false,
 }
 
-const inLatLng = coordinates => coordinates.map(c => ({lat: c.lat(), lng: c.lng()}))
+const inLatLon = c => ({lat: c.lat(), lon: c.lng()})
 
 export default class Map extends React.Component {
     constructor(props) {
@@ -76,7 +76,7 @@ export default class Map extends React.Component {
         g.maps.event.addListenerOnce(this.drawingManager, 'polylinecomplete', (polyline) => {
             const coordinates = polyline.getPath().getArray().slice(0, 2)
             polyline.setPath(coordinates)
-            const precise = inLatLng(coordinates)
+            const precise = coordinates.map(inLatLon)
             addPolylineCallback(precise)
             this.drawingManager.setMap(null)
         })
@@ -106,9 +106,9 @@ export default class Map extends React.Component {
 
     componentDidMount() {
         this.map = new g.maps.Map(this.refs.map, mapOptions)
-        this.map.addListener('center_changed', () => {
-            this.props.setCenter(this.map.getCenter())
-        })
+        const setCenter = () => this.props.setCenter(inLatLon(this.map.getCenter()))
+        setCenter()
+        this.map.addListener('center_changed', setCenter)
 
         this.drawingManager = new g.maps.drawing.DrawingManager({
             drawingControl: false,
@@ -121,7 +121,7 @@ export default class Map extends React.Component {
             const path = polygon.getPath()
             const updatePolygon = () => {
                 const coordinates = path.getArray()
-                const precise = inLatLng(coordinates)
+                const precise = coordinates.map(inLatLon)
                 this.props.setPolygon(precise)
             }
             updatePolygon()

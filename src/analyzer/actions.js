@@ -2,8 +2,6 @@ import axios from 'axios'
 
 import * as t from './actionTypes'
 
-const url = 'https://api.github.com/users/mojombo'
-
 const fetchBuildingsPending = () => ({
     type: t.FETCH_BUILDINGS_PENDING,
 })
@@ -18,9 +16,10 @@ const fetchBuildingsFailure = (error) => ({
     payload: error,
 })
 
-export const fetchBuildings = () => (dispatch) => {
+export const fetchBuildings = (url) => (dispatch) => {
     dispatch(fetchBuildingsPending())
     return axios.get(url)
+        .then(json => json.data.elements)
         .then(json => dispatch(fetchBuildingsSuccess(json)))
         .catch(error => dispatch(fetchBuildingsFailure(error)))
 }
