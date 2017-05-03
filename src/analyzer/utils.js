@@ -14,5 +14,24 @@ export const urlForGetAllInsideSquare = (center, km) => {
     const polyline = `${center.lat - lat} ${center.lon + lon} ${center.lat + lat} ${center.lon + lon} ${center.lat + lat} ${center.lon - lon} ${center.lat - lat} ${center.lon - lon}`
     const query = `?data=[out:json];way(poly:"${polyline}")["building"];(._;>;);out body;`
     console.log(query)
-    // return url + query
+    return url + query
+}
+
+export const fromOverpassElementsToBuildings = (elements) => {
+    const nodes = []
+    const buildings = []
+    elements.forEach((v) => {
+        if (v.type === 'node') {
+            nodes.push(v)
+        } else {
+            const building = {nodes: []}
+            building.nodes = v.nodes.map((id) => {
+                const node = nodes.find(t => t.id === id)
+                return {lat: node.lat, lon: node.lon}
+            })
+            buildings.push(building)
+        }
+    })
+    console.log(buildings)
+    return buildings
 }

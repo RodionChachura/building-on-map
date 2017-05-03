@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import * as t from './actionTypes'
+import {fromOverpassElementsToBuildings} from './utils'
 
 const fetchBuildingsPending = () => ({
     type: t.FETCH_BUILDINGS_PENDING,
@@ -20,6 +21,7 @@ export const fetchBuildings = (url) => (dispatch) => {
     dispatch(fetchBuildingsPending())
     return axios.get(url)
         .then(json => json.data.elements)
+        .then(elements => fromOverpassElementsToBuildings(elements))
         .then(json => dispatch(fetchBuildingsSuccess(json)))
         .catch(error => dispatch(fetchBuildingsFailure(error)))
 }
