@@ -10,10 +10,8 @@ const inLon = (lat, km) => km / lonInKm(lat)
 export const urlForGetAllInsideSquare = (center, km) => {
     const lat = inLat(km)
     const lon = inLon(lat, km)
-    console.log(lat, lon)
     const polyline = `${center.lat - lat} ${center.lon + lon} ${center.lat + lat} ${center.lon + lon} ${center.lat + lat} ${center.lon - lon} ${center.lat - lat} ${center.lon - lon}`
     const query = `?data=[out:json];way(poly:"${polyline}")["building"];(._;>;);out body;`
-    console.log(query)
     return url + query
 }
 
@@ -32,6 +30,5 @@ export const fromOverpassElementsToBuildings = (elements) => {
             buildings.push(building)
         }
     })
-    console.log(buildings)
     return buildings
 }

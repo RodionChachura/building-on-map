@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, ButtonGroup } from 'reactstrap';
 const g = window.google
 
+import {statePropertyChangeListener} from '../utils'
 import './styles.css'
 
 
@@ -42,6 +43,7 @@ export default class Map extends React.Component {
             enters: [],
             exits: []
         }
+        statePropertyChangeListener('analyzer.buildings', this.renderAllBuildings)
     }
     
     render() {
@@ -62,6 +64,24 @@ export default class Map extends React.Component {
                 </footer>
             </div>
         )
+    }
+
+    renderAllBuildings = (buildings) => {
+        buildings.forEach((building) => {
+            const coordinates = building.nodes.map((node) => {
+                return {lat: node.lat, lng: node.lon}
+            })
+
+            const buildingPolygon = new g.maps.Polygon({
+                paths: coordinates,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35
+            });
+            buildingPolygon.setMap(this.map);
+        })
     }
 
     startPolygon = (e) => {

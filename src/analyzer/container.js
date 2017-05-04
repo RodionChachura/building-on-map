@@ -11,13 +11,13 @@ const mapStateToProps = (state) => ({
     buildings: state.analyzer.buildings,
 })
 
-const fullFetchBuildings = (km) => {
-     const center = store.getState().map.center
-     return fetchBuildings(urlForGetAllInsideSquare(center, km))
-}
-
 const mapDispatchToProps = (dispatch) => ({
-    fetch: (km = 1) => dispatch((fullFetchBuildings(km))),
+    fetch: (km = 1) => {
+        if (!store.getState().analyzer.loading) {
+            const center = store.getState().map.center
+            dispatch(fetchBuildings(urlForGetAllInsideSquare(center, km)))
+        }
+    }
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(component)

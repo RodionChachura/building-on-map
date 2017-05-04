@@ -12,10 +12,10 @@ export default (state = initialState, action) => {
             return {...state, loading: true, error: null}
         }
         case t.FETCH_BUILDINGS_SUCCESS: {
-            return {...state, buildings: action.payload}
+            return {...state, buildings: action.payload, loading: false, error: null}
         }
         case t.FETCH_BUILDINGS_FAILURE: {
-            return {...state, error: action.payload}
+            return {...state, error: action.payload, loading: false}
         }
         default:
             return state
