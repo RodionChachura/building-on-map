@@ -1,6 +1,6 @@
 import store from './store'
 
-const getProperty = (propertyName, object) => {
+const getProperty = (propertyName: string, object: any): any => {
     const parts = propertyName.split('.')
     let property = object
     parts.forEach((p) => {
@@ -10,7 +10,7 @@ const getProperty = (propertyName, object) => {
     return property;
 }
 
-export const statePropertyChangeListener = (propertyName, callback) => {
+export const statePropertyChangeListener = (propertyName: string, callback: Function): void => {
     let prevProperty = getProperty(propertyName, store.getState())
     store.subscribe(() => {
         const newProperty = getProperty(propertyName, store.getState())

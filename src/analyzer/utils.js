@@ -5,7 +5,7 @@ import {Building} from './models'
 const url = 'http://overpass-api.de/api/interpreter'
 
 const toRadians = (degrees: number): number => degrees * Math.PI / 180
-const latInKm = 110.574 //km
+const latInKm  = 110.574 //km
 const lonInKm = (lat: number): number => 111.320 * Math.cos(toRadians(lat))
 
 const inLat = (km: number): number => km / latInKm
@@ -26,15 +26,18 @@ export const fromOverpassElementsToBuildings = (elements: Array<OverpassElement>
         if (v.type === 'node') {
             nodes.push(v)
         } else {
-            const building = new Building()
-            building.nodes = v.nodes.map((id) => {
-                const node = nodes.find(t => t.id === id)
-                return {lat: node.lat, lon: node.lon}
-            })
+            const building = new Building(
+                // Overpass returns building nodes with the same first and last node
+                v.nodes.slice(0, -1).map((id) => {
+                    const node = nodes.find(t => t.id === id)
+                    return {lat: node.lat, lon: node.lon}
+                })
+            )
             buildings.push(building)
         }
 
         return buildings
     }, [])
 }
+
 

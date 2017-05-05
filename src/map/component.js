@@ -77,13 +77,12 @@ export default class Map extends React.Component {
 
     renderAllBuildings = (buildings) => {
         buildings.forEach((building) => {
+            console.log(building)
             const coordinates = building.nodes.map((node) => {
                 return {lat: node.lat, lng: node.lon}
             })
-            if (coordinates.length === 5) {
-                const buildingPolygon = new g.maps.Polygon(buildingPolygonOptions(coordinates))
-                buildingPolygon.setMap(this.map)
-            }
+            const buildingPolygon = new g.maps.Polygon(buildingPolygonOptions(coordinates))
+            buildingPolygon.setMap(this.map)
         })
     }
 
