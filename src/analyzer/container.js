@@ -12,7 +12,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-    fetch: (km = 1) => {
+    fetch: (km = 0.5) => {
         if (!store.getState().analyzer.loading) {
             const center = store.getState().map.center
             dispatch(fetchBuildings(urlForGetAllInsideSquare(center, km)))
