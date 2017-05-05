@@ -19,7 +19,7 @@ export default class Analyzer extends React.Component {
 
     render = () => (
         <div>
-            <Button onClick={() => this.props.fetch()} hidden={this.state.dataGathered}>Analyze nearist buildings in radius 10 km</Button>
+            <Button onClick={() => this.props.fetch()} hidden={this.state.dataGathered}>Analyze nearist buildings</Button>
             <h5 hidden={!this.state.dataGathered}>Data gathered</h5>
         </div>
     )

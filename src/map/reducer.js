@@ -1,13 +1,14 @@
 import * as t from './actionTypes'
+import type {State} from './models'
 
-const initialState = {
+const initialState: State = {
     polygon: [],
     enters: [],
     exits: [],
     center: null,
 }
 
-export default (state = initialState, action) => {
+export default (state: State = initialState, action: any): State => {
     switch(action.type) {
         case t.SET_POLYGON: {
             return {...state, polygon: action.payload}

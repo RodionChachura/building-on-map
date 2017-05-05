@@ -13,6 +13,15 @@ const polygonOptions = {
     editable: true
 }
 
+const buildingPolygonOptions = (coordinates) => ({
+    paths: coordinates,
+    strokeColor: '#FF0000',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.35    
+})
+
 const polylineOptions = {
     editable: true
 }
@@ -71,16 +80,10 @@ export default class Map extends React.Component {
             const coordinates = building.nodes.map((node) => {
                 return {lat: node.lat, lng: node.lon}
             })
-
-            const buildingPolygon = new g.maps.Polygon({
-                paths: coordinates,
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35
-            });
-            buildingPolygon.setMap(this.map);
+            if (coordinates.length === 5) {
+                const buildingPolygon = new g.maps.Polygon(buildingPolygonOptions(coordinates))
+                buildingPolygon.setMap(this.map)
+            }
         })
     }
 
