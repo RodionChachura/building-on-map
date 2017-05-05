@@ -13,7 +13,9 @@ export type OverpassElement = {
     id: number,
 }
 
-export type BuildingShape = 'square' | 'rectangle'
+export const buildingShapes = ['triangle', 'square', 'rectangle', 'complex']
+
+export type BuildingShape = 'triangle' | 'square' | 'rectangle' | 'complex'
 
 export class Building {
     nodes: Nodes
@@ -21,10 +23,17 @@ export class Building {
 
     constructor(nodes: Nodes) {
         this.nodes = nodes
+        this.shape = this.getShape()
     }
 
     getShape(): BuildingShape {
-        return 'square'
+        const nodesLen = this.nodes.length
+        if (nodesLen === 3) {
+            return 'triangle'
+        } else if (nodesLen === 4) {
+            return 'square'
+        }
+        return 'complex'
     }
     // smallestEdge(): number {
     //     return this.nodes.reduce((smallest, node, index, nodes) => {

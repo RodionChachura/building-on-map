@@ -17,7 +17,7 @@ const mapDispatchToProps = (dispatch) => ({
             const center = store.getState().map.center
             dispatch(fetchBuildings(urlForGetAllInsideSquare(center, km)))
         }
-    }
+    },
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(component)
