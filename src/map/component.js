@@ -1,10 +1,20 @@
+// @flow
 import React from 'react'
 import { Button, ButtonGroup } from 'reactstrap';
 const g = window.google
 
+import type {Nodes} from '../models'
+import type {BuildingShape} from '../analyzer/models'
 import {statePropertyChangeListener} from '../utils'
 import './styles.css'
 
+const shapesColor = {
+    triangle: '#a3d242',
+    square: '#6f39d6',
+    rectangle: '#19bcb1',
+    complex: '#d97e43',
+    circlelike: '#d4ec14',
+}
 
 const polygonOptions = {
     fillColor: '#ffff00',
@@ -13,12 +23,12 @@ const polygonOptions = {
     editable: true
 }
 
-const buildingPolygonOptions = (coordinates) => ({
+const buildingPolygonOptions = (coordinates: Nodes, shape: BuildingShape) => ({
     paths: coordinates,
     strokeColor: '#FF0000',
     strokeOpacity: 0.8,
     strokeWeight: 2,
-    fillColor: '#FF0000',
+    fillColor: shapesColor[shape],
     fillOpacity: 0.35    
 })
 
@@ -45,13 +55,13 @@ const mapOptions = {
 const inLatLon = c => ({lat: c.lat(), lon: c.lng()})
 
 export default class Map extends React.Component {
+    state = {
+        polygon: null,
+        enters: [],
+        exits: []
+    }
     constructor(props) {
         super(props)
-        this.state = {
-            polygon: null,
-            enters: [],
-            exits: []
-        }
         statePropertyChangeListener('analyzer.buildings', this.renderAllBuildings)
     }
     
@@ -77,11 +87,11 @@ export default class Map extends React.Component {
 
     renderAllBuildings = (buildings) => {
         buildings.forEach((building) => {
-            console.log(building)
             const coordinates = building.nodes.map((node) => {
                 return {lat: node.lat, lng: node.lon}
             })
-            const buildingPolygon = new g.maps.Polygon(buildingPolygonOptions(coordinates))
+            const options = buildingPolygonOptions(coordinates, building.shape)
+            const buildingPolygon = new g.maps.Polygon(options)
             buildingPolygon.setMap(this.map)
         })
     }

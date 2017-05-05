@@ -4,9 +4,10 @@ import type {OverpassElement} from './models'
 import {Building} from './models'
 const url = 'http://overpass-api.de/api/interpreter'
 
-const toRadians = (degrees: number): number => degrees * Math.PI / 180
-const latInKm  = 110.574 //km
-const lonInKm = (lat: number): number => 111.320 * Math.cos(toRadians(lat))
+export const toRadians = (degrees: number): number => degrees * Math.PI / 180
+export const toDegrees = (radians: number): number => radians * 180 / Math.PI
+export const latInKm  = 110.574 //km
+export const lonInKm = (lat: number): number => 111.320 * Math.cos(toRadians(lat))
 
 const inLat = (km: number): number => km / latInKm
 const inLon = (lat: number, km: number): number => km / lonInKm(lat)
@@ -40,4 +41,11 @@ export const fromOverpassElementsToBuildings = (elements: Array<OverpassElement>
     }, [])
 }
 
+export const findAngle = (a: Node, b: Node, c: Node): number => {
+    const ab = Math.sqrt(Math.pow(b.lat - a.lat, 2) + Math.pow(b.lon - a.lon, 2))    
+    const bc = Math.sqrt(Math.pow(b.lat - c.lat, 2) + Math.pow(b.lon - c.lon, 2)) 
+    const ac = Math.sqrt(Math.pow(c.lat - a.lat, 2) + Math.pow(c.lon - a.lon, 2))
+                
+    return toDegrees(Math.acos((bc * bc + ab * ab - ac * ac) / (2 * bc * ab)))
+}
 
