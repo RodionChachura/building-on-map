@@ -15,9 +15,9 @@ export type OverpassElement = {
     id: number,
 }
 
-export const buildingShapes = ['triangle', 'square', 'rectangle', 'complex', 'circlelike']
+export const buildingShapes = ['triangle', 'square', 'rectangle', 'complex', 'circlelike', 'angular']
 
-export type BuildingShape = 'triangle' | 'square' | 'rectangle' | 'complex' | 'circlelike'
+export type BuildingShape = 'triangle' | 'square' | 'rectangle' | 'complex' | 'circlelike' | 'angular'
 
 export class Building {
     nodes: Nodes
@@ -60,6 +60,7 @@ export class Building {
     getShape(): BuildingShape {
         const nodesLen = this.nodes.length
         const edgesLen = this.getEdgesLen()
+        const angles = this.getAngles()
         if (nodesLen === 3) {
             return 'triangle'
         } else if (nodesLen === 4) {
@@ -76,7 +77,9 @@ export class Building {
             if (t > 0.8 && t < 1.2) {
                 return 'circlelike'
             } else {
-                console.log(this.getAngles())
+                if (angles.filter((a) => ((a > 89.5 && a < 90.5) || (a > 269.5 && a < 270.5))).length === this.nodes.length) {
+                    return 'angular'
+                }
             }
         }
         return 'complex'

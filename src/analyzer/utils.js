@@ -2,6 +2,8 @@
 import type {Node} from '../models'
 import type {OverpassElement} from './models'
 import {Building} from './models'
+const g = window.google
+
 const url = 'http://overpass-api.de/api/interpreter'
 
 export const toRadians = (degrees: number): number => degrees * Math.PI / 180
@@ -42,10 +44,13 @@ export const fromOverpassElementsToBuildings = (elements: Array<OverpassElement>
 }
 
 export const findAngle = (a: Node, b: Node, c: Node): number => {
-    const ab = Math.sqrt(Math.pow(b.lat - a.lat, 2) + Math.pow(b.lon - a.lon, 2))    
-    const bc = Math.sqrt(Math.pow(b.lat - c.lat, 2) + Math.pow(b.lon - c.lon, 2)) 
-    const ac = Math.sqrt(Math.pow(c.lat - a.lat, 2) + Math.pow(c.lon - a.lon, 2))
+    // const ab = Math.sqrt(Math.pow(b.lat - a.lat, 2) + Math.pow(b.lon - a.lon, 2))    
+    // const bc = Math.sqrt(Math.pow(b.lat - c.lat, 2) + Math.pow(b.lon - c.lon, 2)) 
+    // const ac = Math.sqrt(Math.pow(c.lat - a.lat, 2) + Math.pow(c.lon - a.lon, 2))
                 
-    return toDegrees(Math.acos((bc * bc + ab * ab - ac * ac) / (2 * bc * ab)))
+    // return toDegrees(Math.acos((bc * bc + ab * ab - ac * ac) / (2 * bc * ab)))
+    const ab = g.maps.geometry.spherical.computeHeading(new g.maps.LatLng(a.lat, a.lon), new g.maps.LatLng(b.lat, b.lon))
+    const cb = g.maps.geometry.spherical.computeHeading(new g.maps.LatLng(b.lat, b.lon), new g.maps.LatLng(c.lat, c.lon))
+    return (ab > cb)? ab - cb: cb - ab
 }
 

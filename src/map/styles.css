@@ -7,6 +7,7 @@ h2 {
 
 .manage {
   padding: 20px; }
-  .manage .btn {
-    border-color: white;
-    color: 'red'; }
+
+.manage .btn {
+  border-color: white;
+  color: 'red'; }

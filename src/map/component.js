@@ -14,6 +14,7 @@ const shapesColor = {
     rectangle: '#19bcb1',
     complex: '#d97e43',
     circlelike: '#d4ec14',
+    angular: '#357ebd'
 }
 
 const polygonOptions = {
