@@ -49,9 +49,7 @@ export default class Map extends React.Component {
         buildings.forEach((building) => {
             const coordinates = building.nodes.map(node => node.latLng())
             const options = o.buildingPolygonOptions(coordinates, building.shape)
-            const buildingPolygon = new m.Polygon(options)
-            buildingPolygon.setMap(this.map)
-            m.event.addListener(buildingPolygon, 'click', (e) => console.log(coordinates))
+            building.initOnGoogleMap(this.map, options)
         })
     }
 

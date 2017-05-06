@@ -1,2 +1,10 @@
 .len {
   padding: 10px; }
+
+.statistic {
+  cursor: pointer; }
+  .statistic:hover {
+    border: 2px solid black; }
+
+li {
+  padding-top: 10px; }

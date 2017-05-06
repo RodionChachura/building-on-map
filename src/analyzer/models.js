@@ -2,6 +2,8 @@
 
 import {getShape} from './utils'
 import type {Nodes} from '../models'
+const m = window.google.maps
+
 
 export type OverpassNode = {
     type: string,
@@ -34,9 +36,19 @@ export const buildingShapesColors = {
 export class Building {
     nodes: Nodes
     shape: BuildingShape
+    googlePolygon: any
 
     constructor(nodes: Nodes) {
         this.nodes = nodes
         this.shape = getShape(nodes)
+    }
+
+    initOnGoogleMap(map: any, options: any): void {
+        this.googlePolygon = new m.Polygon(options)
+        this.googlePolygon.setMap(map)
+
+        // for debug only
+        const coordinates = this.nodes.map(node => node.latLng())
+        m.event.addListener(this.googlePolygon, 'click', (e) => console.log(coordinates))
     }
 }

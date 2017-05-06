@@ -1,3 +1,15 @@
 .len {
     padding: 10px;
 }
+
+.statistic {
+    cursor: pointer;
+
+    &:hover {
+        border: 2px solid black;
+    }
+}
+
+li {
+    padding-top: 10px
+}

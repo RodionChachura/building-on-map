@@ -6,6 +6,7 @@ const initialState: State = {
     enters: [],
     exits: [],
     center: null,
+    building: null,
 }
 
 export default (state: State = initialState, action: any): State => {
