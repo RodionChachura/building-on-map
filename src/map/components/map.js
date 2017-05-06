@@ -1,51 +1,14 @@
 // @flow
 import React from 'react'
 import { Button, ButtonGroup } from 'reactstrap';
-const g = window.google
+const m = window.google.maps
 
-import type {Nodes} from '../models'
-import type {BuildingShape} from '../analyzer/models'
-import {Building, buildingShapesColors} from '../analyzer/models'
-import {statePropertyChangeListener} from '../utils'
+import * as o from './options'
+import {Node} from '../../models'
+import {Building} from '../../analyzer/models'
+import {statePropertyChangeListener} from '../../utils'
 import './styles.css'
 
-const polygonOptions = {
-    fillColor: '#ffff00',
-    strokeColor: 'green',
-    draggable: true,
-    editable: true
-}
-
-const buildingPolygonOptions = (coordinates: Nodes, shape: BuildingShape) => ({
-    paths: coordinates,
-    strokeColor: '#FF0000',
-    strokeOpacity: 0.8,
-    strokeWeight: 2,
-    fillColor: buildingShapesColors[shape],
-    fillOpacity: 0.35    
-})
-
-const polylineOptions = {
-    editable: true
-}
-
-const enterPolylineOptions = {
-    strokeColor: 'blue',
-}
-
-const exitPolylineOptions = {
-    strokeColor: 'red',
-}
-
-const mapOptions = {
-    center: {lat: 53.9145899, lng: 27.5594437},
-    zoom: 18,
-    mapTypeControl: false,
-    panControl: false,
-    streetViewControl: false,
-}
-
-const inLatLon = c => ({lat: c.lat(), lon: c.lng()})
 
 export default class Map extends React.Component {
     state = {
@@ -84,36 +47,34 @@ export default class Map extends React.Component {
 
     renderAllBuildings = (buildings: Array<Building>): void => {
         buildings.forEach((building) => {
-            const coordinates = building.nodes.map((node) => {
-                return {lat: node.lat, lng: node.lon}
-            })
-            const options = buildingPolygonOptions(coordinates, building.shape)
-            const buildingPolygon = new g.maps.Polygon(options)
+            const coordinates = building.nodes.map(node => node.latLng())
+            const options = o.buildingPolygonOptions(coordinates, building.shape)
+            const buildingPolygon = new m.Polygon(options)
             buildingPolygon.setMap(this.map)
-            g.maps.event.addListener(buildingPolygon, 'click', (e) => console.log(coordinates))
+            m.event.addListener(buildingPolygon, 'click', (e) => console.log(coordinates))
         })
     }
 
     startPolygon = (e: Event): void => {
         this.drawingManager.setMap(this.map)
-        this.drawingManager.setDrawingMode(g.maps.drawing.OverlayType.POLYGON)        
+        this.drawingManager.setDrawingMode(m.drawing.OverlayType.POLYGON)        
     }
 
     startPolyline = (options: any, addPolylineCallback: Function) => {
         this.drawingManager.setMap(this.map)
-        this.drawingManager.setDrawingMode(g.maps.drawing.OverlayType.POLYLINE)
+        this.drawingManager.setDrawingMode(m.drawing.OverlayType.POLYLINE)
         this.drawingManager.setOptions({polylineOptions: options})
-        g.maps.event.addListenerOnce(this.drawingManager, 'polylinecomplete', (polyline) => {
+        m.event.addListenerOnce(this.drawingManager, 'polylinecomplete', (polyline) => {
             const coordinates = polyline.getPath().getArray().slice(0, 2)
             polyline.setPath(coordinates)
-            const precise = coordinates.map(inLatLon)
+            const precise = new Node(coordinates.lat(), coordinates.lng())
             addPolylineCallback(precise)
             this.drawingManager.setMap(null)
         })
     }
 
     startEnter = () => {
-        this.startPolyline(enterPolylineOptions, (enter) => {
+        this.startPolyline(o.enterPolylineOptions, (enter) => {
             const enters = [...this.state.enters, {enter}]
             this.setState({enters})
             this.props.setEnters(enters)
@@ -121,7 +82,7 @@ export default class Map extends React.Component {
     }
 
     startExit = () => {
-        this.startPolyline(exitPolylineOptions, (exit) => {
+        this.startPolyline(o.exitPolylineOptions, (exit) => {
             const exits = [...this.state.exits, {exit}]
             this.setState({exits})
             this.props.setExits(exits)
@@ -135,31 +96,35 @@ export default class Map extends React.Component {
     }
 
     componentDidMount() {
-        this.map = new g.maps.Map(this.refs.map, mapOptions)
-        const setCenter = () => this.props.setCenter(inLatLon(this.map.getCenter()))
+        this.map = new m.Map(this.refs.map, o.mapOptions)
+        const setCenter = () => {
+            const coordinates = this.map.getCenter()
+            const node = new Node(coordinates.lat(), coordinates.lng())
+            this.props.setCenter(node)
+        }
         setCenter()
         this.map.addListener('center_changed', setCenter)
 
-        this.drawingManager = new g.maps.drawing.DrawingManager({
+        this.drawingManager = new m.drawing.DrawingManager({
             drawingControl: false,
-            polygonOptions,
-            polylineOptions
+            polygonOptions: o.polygonOptions,
+            polylineOptions: o.polylineOptions,
         })
         this.drawingManager.setMap(this.map)
 
-        g.maps.event.addListener(this.drawingManager, 'polygoncomplete', (polygon) => {
+        m.event.addListener(this.drawingManager, 'polygoncomplete', (polygon) => {
             const path = polygon.getPath()
             const updatePolygon = () => {
                 const coordinates = path.getArray()
-                const precise = coordinates.map(inLatLon)
+                const precise = new Node(coordinates.lat(), coordinates.lng())
                 this.props.setPolygon(precise)
             }
             updatePolygon()
             this.setState({polygon})
             this.drawingManager.setMap(null)
-            g.maps.event.addListener(path, 'insert_at', updatePolygon)
-            g.maps.event.addListener(path, 'set_at', updatePolygon)
-            g.maps.event.addListener(path, 'remove_at', updatePolygon)
+            m.event.addListener(path, 'insert_at', updatePolygon)
+            m.event.addListener(path, 'set_at', updatePolygon)
+            m.event.addListener(path, 'remove_at', updatePolygon)
         })
     }
 }

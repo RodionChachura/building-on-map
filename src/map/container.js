@@ -1,9 +1,10 @@
 // @flow
 
-import component from './component'
+import component from './components/map'
 import { connect } from 'react-redux';
 
-import type {Nodes, Node} from '../models'
+import type {Nodes} from '../models'
+import {Node} from '../models'
 import { setPolygon, setEnters, setExits, setCenter } from './actions'
 
 const mapStateToProps = (state) => {

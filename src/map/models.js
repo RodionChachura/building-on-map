@@ -1,6 +1,8 @@
 // @flow
 
-import type {Node, Nodes} from '../models'
+import type {Nodes} from '../models'
+import {Node} from '../models'
+
 
 export type State = {
     polygon: Nodes | [],

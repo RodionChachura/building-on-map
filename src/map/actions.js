@@ -1,6 +1,7 @@
 // @flow
 
-import type {Node, Nodes, Action} from '../models'
+import type {Nodes, Action} from '../models'
+import {Node} from '../models'
 import * as t from './actionTypes'
 
 export const setPolygon = (coordinates: Nodes): Action => ({

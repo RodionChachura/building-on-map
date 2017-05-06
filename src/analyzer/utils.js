@@ -1,8 +1,11 @@
 // @flow
-import type {Node} from '../models'
+import type {Nodes} from '../models'
+import {Node} from '../models'
 import type {OverpassElement} from './models'
 import {Building} from './models'
-const g = window.google
+import type {BuildingShape} from './models'
+
+const m = window.google.maps
 
 const url = 'https://overpass-api.de/api/interpreter'
 
@@ -23,30 +26,80 @@ export const urlForGetAllInsideSquare = (center: Node, km: number): string => {
     return url + query
 }
 
-export const fromOverpassElementsToBuildings = (elements: Array<OverpassElement>): Array<Building> => {
-    const nodes = []
-    return elements.reduce((buildings, v) => {
-        if (v.type === 'node') {
-            nodes.push(v)
-        } else {
-            const building = new Building(
-                // Overpass returns building nodes with the same first and last node
-                v.nodes.slice(0, -1).map((id) => {
-                    const node = nodes.find(t => t.id === id)
-                    return {lat: node.lat, lon: node.lon}
-                })
-            )
-            buildings.push(building)
-        }
 
-        return buildings
-    }, [])
+export const fromOverpassElementsToBuildings = (elements: Array<OverpassElement>): Array<Building> => {
+    const nodes = elements.filter(e => e.type === 'node')
+    const buildings = elements.filter(e => e.type !== 'node')
+
+    return buildings.map((building) => new Building(
+        building.nodes.slice(0, -1).map((id) => {
+                const node = nodes.find(t => t.id === id)
+                return new Node(node.lat, node.lon)
+            })
+    ))
 }
 
-export const findAngle = (a: Node, b: Node, c: Node): number => {
-    const ab = g.maps.geometry.spherical.computeHeading(new g.maps.LatLng(a.lat, a.lon), new g.maps.LatLng(b.lat, b.lon))
-    const cb = g.maps.geometry.spherical.computeHeading(new g.maps.LatLng(b.lat, b.lon), new g.maps.LatLng(c.lat, c.lon))
+export const getAngle = (a: Node, b: Node, c: Node): number => {
+    const ab = m.geometry.spherical.computeHeading(new m.LatLng(a.lat, a.lon), new m.LatLng(b.lat, b.lon))
+    const cb = m.geometry.spherical.computeHeading(new m.LatLng(b.lat, b.lon), new m.LatLng(c.lat, c.lon))
     
     return (ab > cb)? ab - cb: cb - ab
+}
+
+export const getAngles = (nodes: Nodes): Array<number> => {
+    return nodes.map((node, index) => {
+            const a = node
+            let b, c
+            if (index === nodes.length - 2) {
+                b = nodes[index + 1]
+                c = nodes[0]
+            } else if (index === nodes.length - 1) {
+                b = nodes[0]
+                c = nodes[1]
+            } else {
+                b = nodes[index + 1]
+                c = nodes[index + 2]
+            }
+            return getAngle(a, b, c)
+        })
+}
+
+export const getEdgesLen = (nodes: Nodes): Array<number> => {
+        return nodes.map((node, index) => {
+            const nextIndex = (index === nodes.length - 1) ? 0: index + 1
+            const nextNode = nodes[nextIndex]
+
+            return m.geometry.spherical.computeDistanceBetween(node.googleLatLng(), nextNode.googleLatLng())
+        })
+    }
+
+export const getShape = (nodes: Nodes): BuildingShape => {
+    const nodesLen = nodes.length
+    const edgesLen = getEdgesLen(nodes)
+    const angles = getAngles(nodes)
+    const numberOfRightAngles = angles.filter((a) => ((a > 80 && a < 100) || (a > 260 && a < 280))).length
+    const rectangular = numberOfRightAngles === nodes.length || numberOfRightAngles === nodes.length - 1
+    if (nodesLen === 4) {
+        if (rectangular) {
+            const ratio = edgesLen[0] / edgesLen[1]
+            return (ratio > 3/4.5 && ratio < 4.5/3)? 'square': 'rectangle'
+        }
+        return 'simpleshape'
+    } else if (nodesLen === 5) {
+        return (Math.min(...edgesLen) < 10 && rectangular)? 'rectangle': 'simpleshape'
+    } else {
+        // check if looks like circle
+        const area = m.geometry.spherical.computeArea(nodes.map((v) => new m.LatLng(v.lat, v.lon)))
+        const perimetr = edgesLen.reduce((sum, v) => sum + v)
+        const t = 4 * Math.PI * (area / (perimetr * perimetr))
+        if (t > 0.8 && t < 1.2) {
+            return 'circlelike'
+        } else if (rectangular) {
+            return 'angular'
+        } else if (angles.length < 10) {
+            return 'simpleshape'
+        }
+    }
+    return 'complex'
 }
 

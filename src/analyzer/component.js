@@ -1,14 +1,20 @@
+// @flow
+
 import React from 'react'
 import {Button} from 'reactstrap'
 
-import {buildingShapes, buildingShapesColors} from './models'
+import {buildingShapes, buildingShapesColors, Building} from './models'
 
 import './styles.css'
 
-const Statistic = (props) => {
+type StatisticProps = {
+    buildings: Array<Building>
+}
+
+const Statistic = ({buildings}: StatisticProps) => {
     const shapeLens = buildingShapes.map(shape => ({
         shape,
-        len: props.buildings.filter(b => b.shape === shape).length
+        len: buildings.filter(b => b.shape === shape).length
     })).sort((a, b) => b.len - a.len)
     const list = shapeLens.map((v) => (
             <li key={v.shape}>
