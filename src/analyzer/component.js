@@ -1,7 +1,7 @@
 import React from 'react'
 import {Button} from 'reactstrap'
 
-import {buildingShapes} from './models'
+import {buildingShapes, buildingShapesColors} from './models'
 
 import './styles.css'
 
@@ -12,7 +12,10 @@ const Statistic = (props) => {
     })).sort((a, b) => b.len - a.len)
     const list = shapeLens.map((v) => (
             <li key={v.shape}>
-                <h5>Number of {v.shape} buildings: <span>{v.len}</span></h5>
+                <h5>
+                    Number of <span style={{color: buildingShapesColors[v.shape]}}>{v.shape}</span> buildings: 
+                    <span style={{color: buildingShapesColors[v.shape]}} className={'len'}>{v.len}</span>
+                </h5>
             </li>
         )
     )

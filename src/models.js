@@ -10,4 +10,6 @@ export type Nodes = Array<Node>
 export type Action = {
     +type: string,
     payload: any,
+} | {
+    type: string,
 }

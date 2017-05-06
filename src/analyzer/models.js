@@ -15,9 +15,18 @@ export type OverpassElement = {
     id: number,
 }
 
-export const buildingShapes = ['triangle', 'square', 'rectangle', 'complex', 'circlelike', 'angular']
+export const buildingShapes = ['square', 'rectangle', 'complex', 'circlelike', 'angular', 'simpleshape']
 
-export type BuildingShape = 'triangle' | 'square' | 'rectangle' | 'complex' | 'circlelike' | 'angular'
+export type BuildingShape = 'square' | 'rectangle' | 'complex' | 'circlelike' | 'angular' | 'simpleshape'
+
+export const buildingShapesColors = {
+    square: '#6f39d6',
+    rectangle: '#19bcb1',
+    complex: '#d97e43',
+    circlelike: '#d4ec14',
+    angular: '#357ebd',
+    simpleshape: '#ee2269',
+}
 
 export class Building {
     nodes: Nodes
@@ -61,37 +70,34 @@ export class Building {
         const nodesLen = this.nodes.length
         const edgesLen = this.getEdgesLen()
         const angles = this.getAngles()
-        if (nodesLen === 3) {
-            return 'triangle'
-        } else if (nodesLen === 4) {
-            const ratio = edgesLen[0] / edgesLen[1]
-            if (ratio > 3/4.5 && ratio < 4.5/3) {
-                return 'square'
-            } else {
-                return 'rectangle'
+        const numberOfRightAngles = angles.filter((a) => ((a > 80 && a < 100) || (a > 260 && a < 280))).length
+        const rectangular = numberOfRightAngles === this.nodes.length || numberOfRightAngles === this.nodes.length - 1
+        if (nodesLen === 4) {
+            if (rectangular) {
+                const ratio = edgesLen[0] / edgesLen[1]
+                return (ratio > 3/4.5 && ratio < 4.5/3)? 'square': 'rectangle'
             }
+            return 'simpleshape'
+        } else if (nodesLen === 5) {
+            console.log(this.smallestEdge())
+            return (this.smallestEdge() < 10 && rectangular)? 'rectangle': 'simpleshape'
         } else {
+            // check if looks like circle
             const area = g.maps.geometry.spherical.computeArea(this.nodes.map((v) => new g.maps.LatLng(v.lat, v.lon)))
             const perimetr = edgesLen.reduce((sum, v) => sum + v)
             const t = 4 * Math.PI * (area / (perimetr * perimetr))
             if (t > 0.8 && t < 1.2) {
                 return 'circlelike'
-            } else {
-                if (angles.filter((a) => ((a > 89.5 && a < 90.5) || (a > 269.5 && a < 270.5))).length === this.nodes.length) {
-                    return 'angular'
-                }
+            } else if (rectangular) {
+                return 'angular'
+            } else if (angles.length < 10) {
+                return 'simpleshape'
             }
         }
         return 'complex'
     }
-    // smallestEdge(): number {
-    //     return this.nodes.reduce((smallest, node, index, nodes) => {
-    //         const nextIndex = (index === nodes.length - 1) ? 0: index + 1
-    //         const nextNode = nodes[nextIndex]
-    //         const gNode = new g.maps.LatLng(node.lat, node.lon)
-    //         const gNextNode = new g.maps.LatLng(nextNode.lat, nextNode.lon)
-    //         const dist = g.maps.geometry.spherical.computeDistanceBetween(gNode, gNextNode)
-    //         return (dist < smallest) ? dist: smallest
-    //     }, Math.max())
-    // }
+
+    smallestEdge(): number { 
+        return  Math.min(...this.getEdgesLen())
+    }
 }

@@ -5,17 +5,9 @@ const g = window.google
 
 import type {Nodes} from '../models'
 import type {BuildingShape} from '../analyzer/models'
+import {Building, buildingShapesColors} from '../analyzer/models'
 import {statePropertyChangeListener} from '../utils'
 import './styles.css'
-
-const shapesColor = {
-    triangle: '#a3d242',
-    square: '#6f39d6',
-    rectangle: '#19bcb1',
-    complex: '#d97e43',
-    circlelike: '#d4ec14',
-    angular: '#357ebd'
-}
 
 const polygonOptions = {
     fillColor: '#ffff00',
@@ -29,7 +21,7 @@ const buildingPolygonOptions = (coordinates: Nodes, shape: BuildingShape) => ({
     strokeColor: '#FF0000',
     strokeOpacity: 0.8,
     strokeWeight: 2,
-    fillColor: shapesColor[shape],
+    fillColor: buildingShapesColors[shape],
     fillOpacity: 0.35    
 })
 
@@ -61,6 +53,10 @@ export default class Map extends React.Component {
         enters: [],
         exits: []
     }
+
+    map: any
+    drawingManager: any
+
     constructor(props) {
         super(props)
         statePropertyChangeListener('analyzer.buildings', this.renderAllBuildings)
@@ -86,7 +82,7 @@ export default class Map extends React.Component {
         )
     }
 
-    renderAllBuildings = (buildings) => {
+    renderAllBuildings = (buildings: Array<Building>): void => {
         buildings.forEach((building) => {
             const coordinates = building.nodes.map((node) => {
                 return {lat: node.lat, lng: node.lon}
@@ -94,15 +90,16 @@ export default class Map extends React.Component {
             const options = buildingPolygonOptions(coordinates, building.shape)
             const buildingPolygon = new g.maps.Polygon(options)
             buildingPolygon.setMap(this.map)
+            g.maps.event.addListener(buildingPolygon, 'click', (e) => console.log(coordinates))
         })
     }
 
-    startPolygon = (e) => {
+    startPolygon = (e: Event): void => {
         this.drawingManager.setMap(this.map)
         this.drawingManager.setDrawingMode(g.maps.drawing.OverlayType.POLYGON)        
     }
 
-    startPolyline = (options, addPolylineCallback) => {
+    startPolyline = (options: any, addPolylineCallback: Function) => {
         this.drawingManager.setMap(this.map)
         this.drawingManager.setDrawingMode(g.maps.drawing.OverlayType.POLYLINE)
         this.drawingManager.setOptions({polylineOptions: options})
@@ -131,7 +128,7 @@ export default class Map extends React.Component {
         })
     }
 
-    deletePolygon = (e) => {
+    deletePolygon = (e: Event): void => {
         this.state.polygon.setMap(null)
         this.setState({polygon: null})
         this.props.setPolygon([])
