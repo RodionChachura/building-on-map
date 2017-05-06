@@ -1,7 +1,11 @@
-import component from './component'
+// @flow
+
+import component from './components/map'
 import { connect } from 'react-redux';
 
-import { setPolygon, setEnters, setExits } from './actions'
+import type {Nodes} from '../models'
+import {Node} from '../models'
+import { setPolygon, setEnters, setExits, setCenter } from './actions'
 
 const mapStateToProps = (state) => {
   return {}
@@ -9,9 +13,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setPolygon: (coordinates) => {dispatch(setPolygon(coordinates))},
-    setEnters: (enters) => {dispatch(setEnters(enters))},
-    setExits: (exits) => {dispatch(setExits(exits))},    
+    setPolygon: (coordinates: Nodes) => dispatch(setPolygon(coordinates)),
+    setEnters: (enters: Array<Nodes>) => dispatch(setEnters(enters)),
+    setExits: (exits: Array<Nodes>) => dispatch(setExits(exits)), 
+    setCenter: (center: Node) => dispatch(setCenter(center)),  
   }
 }
 

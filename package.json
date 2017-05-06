@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://RodionChachura.github.io/building-on-map",
   "dependencies": {
+    "axios": "^0.16.1",
     "bootstrap": "^4.0.0-alpha.6",
     "react": "^15.5.4",
     "react-addons-css-transition-group": "^15.5.2",
@@ -12,9 +13,12 @@
     "react-google-maps": "^6.3.0",
     "react-redux": "^5.0.4",
     "reactstrap": "^4.5.0",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "redux-logger": "^3.0.1",
+    "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
+    "flow-bin": "^0.45.0",
     "gh-pages": "^0.12.0",
     "node-sass": "^4.5.2",
     "npm-run-all": "^4.0.2",
@@ -29,6 +33,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "flow": "flow"
   }
 }
