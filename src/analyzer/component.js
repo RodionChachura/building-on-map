@@ -33,9 +33,10 @@ const Statistic = ({buildings}: StatisticProps) => {
 export default class Analyzer extends React.Component {
     render = () => {
         let dataGathered = this.props.buildings.length > 0
+        let polygonReady = this.props.polygon.length > 0
         return (
             <div>
-                <Button onClick={() => this.props.fetch()} hidden={dataGathered}>Analyze nearist buildings</Button>
+                <Button onClick={() => this.props.fetch()} hidden={dataGathered || !polygonReady}>Analyze nearist buildings</Button>
                 <h5 hidden={!dataGathered}>Data gathered</h5>
                 <ul hidden={!dataGathered}>
                     <Statistic buildings={this.props.buildings}></Statistic>

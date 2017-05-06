@@ -31,9 +31,9 @@ export default class Map extends React.Component {
                 <h2>Map</h2>
                 <div ref='map' className={'map'}></div>
                 <div className={'row justify-content-center manage'}>
-                    <ButtonGroup>
-                        <Button color='info' hidden={this.state.polygon} onClick={this.startPolygon}>Polygon</Button>
-                        <Button color='warning' hidden={!this.state.polygon} onClick={this.deletePolygon}>Remove polygon</Button>
+                    <Button color='info' hidden={this.state.polygon} onClick={this.startPolygon}>Start Polygon</Button>
+                    <ButtonGroup hidden={!this.state.polygon}>
+                        <Button color='warning' onClick={this.deletePolygon}>Remove polygon</Button>
                         <Button color='info'  onClick={this.startEnter}>Enter</Button>
                         <Button color='info' onClick={this.startExit}>Exit</Button>
                     </ButtonGroup>
@@ -67,7 +67,7 @@ export default class Map extends React.Component {
         m.event.addListenerOnce(this.drawingManager, 'polylinecomplete', (polyline) => {
             const coordinates = polyline.getPath().getArray().slice(0, 2)
             polyline.setPath(coordinates)
-            const precise = new Node(coordinates.lat(), coordinates.lng())
+            const precise = coordinates.map(c => new Node(c.lat(), c.lng()))
             addPolylineCallback(precise)
             this.drawingManager.setMap(null)
         })
@@ -116,7 +116,8 @@ export default class Map extends React.Component {
             const path = polygon.getPath()
             const updatePolygon = () => {
                 const coordinates = path.getArray()
-                const precise = new Node(coordinates.lat(), coordinates.lng())
+                console.log(coordinates)
+                const precise = coordinates.map(c => new Node(c.lat(), c.lng()))
                 this.props.setPolygon(precise)
             }
             updatePolygon()
