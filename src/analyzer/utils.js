@@ -40,8 +40,8 @@ export const fromOverpassElementsToBuildings = (elements: Array<OverpassElement>
 }
 
 export const getAngle = (a: Node, b: Node, c: Node): number => {
-    const ab = m.geometry.spherical.computeHeading(new m.LatLng(a.lat, a.lon), new m.LatLng(b.lat, b.lon))
-    const cb = m.geometry.spherical.computeHeading(new m.LatLng(b.lat, b.lon), new m.LatLng(c.lat, c.lon))
+    const ab = m.geometry.spherical.computeHeading(a.googleLatLng(), b.googleLatLng())
+    const cb = m.geometry.spherical.computeHeading(b.googleLatLng(), c.googleLatLng())
     
     return (ab > cb)? ab - cb: cb - ab
 }
@@ -89,7 +89,7 @@ export const getShape = (nodes: Nodes): BuildingShape => {
         return (Math.min(...edgesLen) < 10 && rectangular)? 'rectangle': 'simpleshape'
     } else {
         // check if looks like circle
-        const area = m.geometry.spherical.computeArea(nodes.map((v) => new m.LatLng(v.lat, v.lon)))
+        const area = m.geometry.spherical.computeArea(nodes.map((v) => v.googleLatLng()))
         const perimetr = edgesLen.reduce((sum, v) => sum + v)
         const t = 4 * Math.PI * (area / (perimetr * perimetr))
         if (t > 0.8 && t < 1.2) {
@@ -101,5 +101,13 @@ export const getShape = (nodes: Nodes): BuildingShape => {
         }
     }
     return 'complex'
+}
+
+export const getPolygonCenter = (nodes: Nodes): Node => {
+    const bounds = new m.LatLngBounds()
+    const coordinates = nodes.map(n => n.googleLatLng())
+    coordinates.forEach(c => bounds.extend(c))
+    const center = bounds.getCenter()
+    return new Node(center.lat(), center.lng())
 }
 

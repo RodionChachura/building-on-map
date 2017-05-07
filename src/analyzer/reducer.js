@@ -1,6 +1,16 @@
 import * as t from './actionTypes'
+import * as m from './models'
+import type {Action} from './../models'
 
-const initialState = {
+type State = {
+    buildings: Array<m.Building>,
+    loading: boolean,
+    error: any,
+    zoomed: m.Building,
+    selected: m.Building,
+}
+
+const initialState: State = {
     buildings: [],
     loading: false,
     error: null,
@@ -8,7 +18,7 @@ const initialState = {
     selected: null,
 }
 
-export default (state = initialState, action) => {
+export default (state: State = initialState, action: Action): State => {
     switch(action.type) {
         case t.FETCH_BUILDINGS_PENDING: {
             return {...state, loading: true, error: null}
@@ -19,11 +29,11 @@ export default (state = initialState, action) => {
         case t.FETCH_BUILDINGS_FAILURE: {
             return {...state, error: action.payload, loading: false}
         }
-        case t.SET_SELECTED: {
-            return {...state, selected: action.payload}
-        }
         case t.SET_ZOOMED: {
             return {...state, zoomed: action.payload}
+        }
+        case t.SET_SELECTED: {
+            return {...state, selected: action.payload}
         }
         default:
             return state

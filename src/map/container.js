@@ -5,18 +5,21 @@ import { connect } from 'react-redux';
 
 import type {Nodes} from '../models'
 import {Node} from '../models'
-import { setPolygon, setEnters, setExits, setCenter } from './actions'
+import * as s from './actions'
 
 const mapStateToProps = (state) => {
-  return {}
+  return {
+    buildings: state.analyzer.buildings
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setPolygon: (coordinates: Nodes) => dispatch(setPolygon(coordinates)),
-    setEnters: (enters: Array<Nodes>) => dispatch(setEnters(enters)),
-    setExits: (exits: Array<Nodes>) => dispatch(setExits(exits)), 
-    setCenter: (center: Node) => dispatch(setCenter(center)),  
+    setPolygon: (coordinates: Nodes) => dispatch(s.setPolygon(coordinates)),
+    setEnters: (enters: Array<Nodes>) => dispatch(s.setEnters(enters)),
+    setExits: (exits: Array<Nodes>) => dispatch(s.setExits(exits)), 
+    setCenter: (center: Node) => dispatch(s.setCenter(center)),  
+    setSelected: (polygon: Nodes) => dispatch(s.setSelected(polygon)),  
   }
 }
 

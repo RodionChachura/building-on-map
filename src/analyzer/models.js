@@ -52,3 +52,34 @@ export class Building {
         m.event.addListener(this.googlePolygon, 'click', (e) => console.log(coordinates))
     }
 }
+
+
+export class AnalyzerShape {
+    shape: BuildingShape
+    buildings: Array<Building>
+    zoomedPosition: number
+
+    // empty array not allowed
+    constructor(shape: BuildingShape, buildings: Array<Building>) {
+        this.shape = shape
+        this.buildings = buildings
+        this.zoomedPosition = 0
+    }
+
+    zoomed(): Building {
+        return this.buildings[this.zoomedPosition]
+    }
+
+    next(): Building {
+        if (this.zoomedPosition === this.size() - 1) {
+            this.zoomedPosition = 0
+        } else {
+            this.zoomedPosition += 1
+        }
+        return this.zoomed()
+    }
+
+    size(): number {
+        return this.buildings.length
+    }
+}

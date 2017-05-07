@@ -23,3 +23,8 @@ export const setCenter = (center: Node): Action => ({
     type: t.SET_CENTER,
     payload: center,
 })
+
+export const setSelected = (polygon: Nodes): Action => ({
+    type: t.SET_CENTER,
+    payload: polygon,
+})

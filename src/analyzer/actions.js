@@ -33,7 +33,7 @@ export const setZoomed = (building: Building): Action => ({
     payload: building
 })
 
-export const setSelected = (selected: Building): Action => ({
-    type: t.SET_ZOOMED,
-    payload: selected
+export const setSelected = (building: Building): Action => ({
+    type: t.SET_SELECTED,
+    payload: building
 })

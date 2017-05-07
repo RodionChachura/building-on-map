@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 import store from '../store'
 
 import component from './component'
-import { fetchBuildings, setSelected, setZoomed } from './actions'
+import { fetchBuildings, setZoomed } from './actions'
 import {Building} from './models'
 import { urlForGetAllInsideSquare } from './utils'
 
@@ -19,8 +19,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
             dispatch(fetchBuildings(urlForGetAllInsideSquare(center, km)))
         }
     },
-    setSelected: (selected: Building) => dispatch(setSelected(selected)),
     setZoomed: (zoomed: Building) => dispatch(setZoomed(zoomed)),
+    setSelected: (selected: Building) => dispatch(setZoomed(selected)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(component)

@@ -2,14 +2,24 @@
     padding: 10px;
 }
 
-.statistic {
+li {
     cursor: pointer;
+    padding: 10px;
 
     &:hover {
         border: 2px solid black;
     }
+
+    h5 {
+        padding-top: 10px
+    }
 }
 
-li {
-    padding-top: 10px
+ul {
+    padding-left: 10px;
 }
+
+
+// .buttons {
+//     padding-bottom: 10px;
+// }

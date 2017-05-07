@@ -6,51 +6,87 @@ const m = window.google.maps
 import * as o from './options'
 import {Node} from '../../models'
 import {Building} from '../../analyzer/models'
+import {getPolygonCenter} from '../../analyzer/utils'
 import {statePropertyChangeListener} from '../../utils'
 import './styles.css'
 
+// toflow
+// State
 
-export default class Map extends React.Component {
-    state = {
+type Props = {
+    buildings: Array<Building>,
+
+    setPolygon: Function,
+    setEnters: Function,
+    setExits: Function,
+    setCenter: Function,
+    setSelected: Function,
+}
+
+type State = {
+    polygon: any,
+    enters: any,
+    exits: any,
+    zoomed: any,
+}
+
+export default class Map extends React.Component<void, Props, State> {
+    state: State = {
         polygon: null,
-        enters: [],
-        exits: []
+        enters: null,
+        exits: null,
+        zoomed: null,
     }
 
     map: any
     drawingManager: any
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props)
         statePropertyChangeListener('analyzer.buildings', this.renderAllBuildings)
+        statePropertyChangeListener('analyzer.zoomed', this.zoomToBuilding)
     }
     
     render() {
         return (
             <div>
-                <h2>Map</h2>
                 <div ref='map' className={'map'}></div>
                 <div className={'row justify-content-center manage'}>
                     <Button color='info' hidden={this.state.polygon} onClick={this.startPolygon}>Start Polygon</Button>
-                    <ButtonGroup hidden={!this.state.polygon}>
-                        <Button color='warning' onClick={this.deletePolygon}>Remove polygon</Button>
-                        <Button color='info'  onClick={this.startEnter}>Enter</Button>
-                        <Button color='info' onClick={this.startExit}>Exit</Button>
-                    </ButtonGroup>
+                    <div hidden={!this.state.polygon}>
+                        <ButtonGroup>
+                            <Button color='warning' onClick={this.deletePolygon}>Remove polygon</Button>
+                            <Button color='info'  onClick={this.startEnter}>Enter</Button>
+                            <Button color='info' onClick={this.startExit}>Exit</Button>
+                        </ButtonGroup>
+                        <p>click twice to finish enter or exit</p>
+                    </div>
                 </div>
-                <footer className={'row justify-content-center'}>
-                    click twice to finish enter or exit
-                </footer>
+                
             </div>
         )
     }
 
     renderAllBuildings = (buildings: Array<Building>): void => {
         buildings.forEach((building) => {
-            const coordinates = building.nodes.map(node => node.latLng())
-            const options = o.buildingPolygonOptions(coordinates, building.shape)
+            const options = o.buildingPolygonOptions(building.nodes, building.shape)
             building.initOnGoogleMap(this.map, options)
         })
+    }
+
+    unzoomBuilding() {
+        const z = this.state.zoomed
+        z.googlePolygon.setOptions(o.buildingPolygonOptions(z.nodes, z.shape))        
+    }
+
+    zoomToBuilding = (zoomed: Building): void => {
+        if (this.state.zoomed)
+            this.unzoomBuilding()
+        const center = getPolygonCenter(zoomed.nodes)
+        this.map.setCenter(center.googleLatLng())
+        this.setState({zoomed})
+        zoomed.googlePolygon.setOptions(o.zoomedBuildingPolygonOptions(zoomed.nodes))
+        // this.props.buildings.forEach(b => b.googlePolygon.setOptions(o.buildingPolygonOptions(b.nodes,'circlelike')))
     }
 
     startPolygon = (e: Event): void => {
