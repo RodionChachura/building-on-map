@@ -1,6 +1,6 @@
 // @flow
 
-import {getShape} from './utils'
+import {getShape} from '../utils/map'
 import type {Nodes} from '../models'
 const m = window.google.maps
 

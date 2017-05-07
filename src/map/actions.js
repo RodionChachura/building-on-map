@@ -24,7 +24,7 @@ export const setCenter = (center: Node): Action => ({
     payload: center,
 })
 
-export const setSelected = (polygon: Nodes): Action => ({
-    type: t.SET_CENTER,
+export const setBuilding = (polygon: Nodes): Action => ({
+    type: t.SET_BUILDING,
     payload: polygon,
 })

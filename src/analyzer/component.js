@@ -3,7 +3,7 @@
 import React from 'react'
 import {Button, ButtonGroup} from 'reactstrap'
 
-import {statePropertyChangeListener} from './../utils'
+import {statePropertyChangeListener} from '../utils/common'
 import * as m from './models'
 import type {Nodes} from './../models'
 import {Node} from './../models'
@@ -63,11 +63,11 @@ export default class Analyzer extends React.Component<void, Props, State> {
     }
 
     render() {
-        // let dataGathered = this.props.buildings.length > 0
-        // let polygonReady = this.props.polygon.length > 0
+        let dataGathered = this.props.buildings.length > 0
+        let polygonReady = this.props.polygon.length > 0
         return (
             <div>
-                <Button onClick={() => this.props.fetch()} /*hidden={dataGathered || !polygonReady}*/>Analyze nearist buildings</Button>
+                <Button onClick={() => this.props.fetch()} hidden={dataGathered || !polygonReady}>Analyze nearist buildings</Button>
                 {this.renderBuildingsWithShape()}
             </div>
         )

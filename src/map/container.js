@@ -9,7 +9,9 @@ import * as s from './actions'
 
 const mapStateToProps = (state) => {
   return {
-    buildings: state.analyzer.buildings
+    buildings: state.analyzer.buildings,
+    polygon: state.map.polygon,
+    building: state.map.building
   }
 }
 
@@ -19,7 +21,7 @@ const mapDispatchToProps = (dispatch) => {
     setEnters: (enters: Array<Nodes>) => dispatch(s.setEnters(enters)),
     setExits: (exits: Array<Nodes>) => dispatch(s.setExits(exits)), 
     setCenter: (center: Node) => dispatch(s.setCenter(center)),  
-    setSelected: (polygon: Nodes) => dispatch(s.setSelected(polygon)),  
+    setBuilding: (polygon: Nodes) => dispatch(s.setBuilding(polygon)),  
   }
 }
 

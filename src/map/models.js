@@ -10,5 +10,5 @@ export type State = {
     enters: Array<Nodes>,
     exits: Array<Nodes>,
     center: Node,
-    building: Nodes,
+    building: Building,
 }

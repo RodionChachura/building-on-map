@@ -6,7 +6,7 @@ const m = window.google.maps
 import * as o from './options'
 import {Node} from '../../models'
 import {Building} from '../../analyzer/models'
-import {getPolygonCenter} from '../../analyzer/utils'
+import {getPolygonCenter, polygonWithNewCenter} from '../../utils/map'
 import {statePropertyChangeListener} from '../../utils'
 import './styles.css'
 
@@ -15,12 +15,14 @@ import './styles.css'
 
 type Props = {
     buildings: Array<Building>,
+    polygon: Nodes,
+    building: Building,
 
     setPolygon: Function,
     setEnters: Function,
     setExits: Function,
     setCenter: Function,
-    setSelected: Function,
+    setBuilding: Function,
 }
 
 type State = {
@@ -45,6 +47,7 @@ export default class Map extends React.Component<void, Props, State> {
         super(props)
         statePropertyChangeListener('analyzer.buildings', this.renderAllBuildings)
         statePropertyChangeListener('analyzer.zoomed', this.zoomToBuilding)
+        statePropertyChangeListener('analyzer.selected', this.selectBuilding)
     }
     
     render() {
@@ -87,6 +90,16 @@ export default class Map extends React.Component<void, Props, State> {
         this.setState({zoomed})
         zoomed.googlePolygon.setOptions(o.zoomedBuildingPolygonOptions(zoomed.nodes))
         // this.props.buildings.forEach(b => b.googlePolygon.setOptions(o.buildingPolygonOptions(b.nodes,'circlelike')))
+    }
+
+    selectBuilding = (selected: Building): void => {
+        // create building and init on map
+        const polygon = polygonWithNewCenter(selected.nodes, getPolygonCenter(this.props.polygon))
+        const building = new Building(polygon)
+        building.initOnGoogleMap(this.map, o.buildingOptions(building.nodes))
+        // zoom to the new place on the map
+        const center = getPolygonCenter(polygon)
+        this.map.setCenter(center.googleLatLng())
     }
 
     startPolygon = (e: Event): void => {

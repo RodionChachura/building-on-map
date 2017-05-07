@@ -17,7 +17,7 @@ export default (state: State = initialState, action: any): State => {
         case t.SET_ENTERS:   return {...state, enters: action.payload}
         case t.SET_EXITS:    return {...state, exits: action.payload}
         case t.SET_CENTER:   return {...state, center: action.payload}
-        case t.SET_SELECTED: return {...state, selected: action.payload}
+        case t.SET_BUILDING: return {...state, building: action.payload}
         default: return state
     }
 }

@@ -6,6 +6,7 @@ import {buildingShapesColors} from '../../analyzer/models'
 
 export const polygonOptions = {
     fillColor: '#ffff00',
+    fillOpacity: 0.35,
     strokeColor: 'green',
     draggable: true,
     editable: true
@@ -27,6 +28,17 @@ export const zoomedBuildingPolygonOptions = (nodes: Nodes) => ({
     strokeWeight: 2,
     fillColor: '#FF0000',
     fillOpacity: 1       
+})
+
+export const buildingOptions = (nodes: Nodes) => ({
+    paths: nodes.map(n => n.latLng()),
+    strokeColor: '#700000',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#df3e20',
+    fillOpacity: 1,
+    draggable: true,
+    editable: true,
 })
 
 export const polylineOptions = {

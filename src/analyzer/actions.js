@@ -3,7 +3,7 @@ import axios from 'axios'
 import * as t from './actionTypes'
 import type {Action} from '../models'
 import {Building} from './models'
-import {fromOverpassElementsToBuildings} from './utils'
+import {fromOverpassElementsToBuildings} from '../utils/map'
 
 const fetchBuildingsPending = (): Action => ({
     type: t.FETCH_BUILDINGS_PENDING,

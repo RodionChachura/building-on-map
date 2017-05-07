@@ -1,9 +1,8 @@
 // @flow
 import type {Nodes} from '../models'
 import {Node} from '../models'
-import type {OverpassElement} from './models'
-import {Building} from './models'
-import type {BuildingShape} from './models'
+import type {OverpassElement, BuildingShape} from '../analyzer/models'
+import {Building} from '../analyzer/models'
 
 const m = window.google.maps
 
@@ -109,5 +108,13 @@ export const getPolygonCenter = (nodes: Nodes): Node => {
     coordinates.forEach(c => bounds.extend(c))
     const center = bounds.getCenter()
     return new Node(center.lat(), center.lng())
+}
+
+export const polygonWithNewCenter = (polygon: Nodes, newCenter: Node): Nodes => {
+    const oldCenter = getPolygonCenter(polygon)
+    const latDiff = newCenter.lat - oldCenter.lat
+    const lonDiff = newCenter.lon - oldCenter.lon
+
+    return polygon.map(n => new Node(n.lat + latDiff, n.lon + lonDiff))
 }
 
