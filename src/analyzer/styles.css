@@ -4,10 +4,12 @@
 li {
   cursor: pointer;
   padding: 10px; }
-  li:hover {
-    border: 2px solid black; }
-  li h5 {
-    padding-top: 10px; }
+
+li:hover {
+  border: 2px solid black; }
+
+li h5 {
+  padding-top: 10px; }
 
 ul {
   padding-left: 10px; }

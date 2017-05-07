@@ -93,6 +93,9 @@ export default class Map extends React.Component<void, Props, State> {
     }
 
     selectBuilding = (selected: Building): void => {
+        if (this.props.building) {
+            this.props.building.googlePolygon.setMap(null)
+        }
         // create building and init on map
         const polygon = polygonWithNewCenter(selected.nodes, getPolygonCenter(this.props.polygon))
         const building = new Building(polygon)
@@ -100,6 +103,7 @@ export default class Map extends React.Component<void, Props, State> {
         // zoom to the new place on the map
         const center = getPolygonCenter(polygon)
         this.map.setCenter(center.googleLatLng())
+        this.props.setBuilding(building)
     }
 
     startPolygon = (e: Event): void => {

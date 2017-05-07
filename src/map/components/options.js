@@ -4,6 +4,8 @@ import type {Nodes} from '../../models'
 import type {BuildingShape} from '../../analyzer/models'
 import {buildingShapesColors} from '../../analyzer/models'
 
+const m = window.google.maps
+
 export const polygonOptions = {
     fillColor: '#ffff00',
     fillOpacity: 0.35,
@@ -39,6 +41,7 @@ export const buildingOptions = (nodes: Nodes) => ({
     fillOpacity: 1,
     draggable: true,
     editable: true,
+    zIndex: m.Marker.MAX_ZINDEX + 1
 })
 
 export const polylineOptions = {
