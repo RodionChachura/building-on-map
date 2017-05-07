@@ -20,7 +20,7 @@ export const urlForGetAllInsideSquare = (center: Node, km: number): string => {
     const lat = inLat(km)
     const lon = inLon(lat, km)
     const polyline = `${center.lat - lat} ${center.lon + lon} ${center.lat + lat} ${center.lon + lon} ${center.lat + lat} ${center.lon - lon} ${center.lat - lat} ${center.lon - lon}`
-    const query = `?data=[out:json];way(poly:"${polyline}")["building"];(._;>;);out body;`
+    const query = `?data=[out:json];way(poly:"${polyline}")["building"];(._;>;);out body;` 
 
     return url + query
 }
@@ -133,5 +133,65 @@ export const resizePolygon = (polygon: Nodes, ratio: number = 1.1): Nodes => {
 
         return n
     })
+}
+
+// export const rotatatePolygon = (polygon: Nodes, ratio: number = 1.1) => {
+//     return polygon.map((n) => {
+//         return new Node()
+//     })
+// }
+
+
+
+
+
+// code take from https://github.com/ahmadnassri/google-maps-polygon-rotate
+m.LatLng.prototype.distanceTo = function (point: any) {
+    const lat = Math.pow(this.lat() - point.lat(), 2)
+    const lng = Math.pow(this.lng() - point.lng(), 2)
+    return Math.sqrt(lat + lng)
+}
+m.LatLng.prototype.rotate = function (angle: number, origin: any) {
+    const radianAngle = angle * (Math.PI / 180)
+    const radius = this.distanceTo(origin)
+    const theta = radianAngle + Math.atan2(this.lng() - origin.lng(), this.lat() - origin.lat())
+    const x = origin.lat() + (radius * Math.cos(theta))
+    const y = origin.lng() + (radius * Math.sin(theta))
+    return new m.LatLng(x, y)
+}
+m.Point.prototype.rotate = function (angle, origin) {
+  const rad = angle * (Math.PI / 180)
+  const x = this.x - origin.x
+  const y = this.y - origin.y
+  return new m.Point(
+    x * Math.cos(rad) - y * Math.sin(rad) + origin.x,
+    x * Math.sin(rad) + y * Math.cos(rad) + origin.y
+  )
+}
+m.Polygon.prototype.getCenter = function () {
+  const coords = this.getPath().getArray()
+  const bounds = new m.LatLngBounds()
+  coords.forEach((point, index) => {
+    bounds.extend(coords[index])
+  })
+
+  return bounds.getCenter()
+}
+m.Polygon.prototype.rotate = function (angle, latLng, map=this.getMap()) {
+    if (map === undefined) {
+        console.warn('No valid google maps object found')
+        return
+    }
+    const coords = this.getPath().getArray()
+    const projection = map.getProjection()
+    const origin = projection.fromLatLngToPoint(latLng)
+
+    coords.forEach((point, index) => {
+        const pixelCoord = projection.fromLatLngToPoint(point).rotate(angle, origin)
+
+        coords[index] = projection.fromPointToLatLng(pixelCoord)
+    })
+
+    this.setPaths(coords)
 }
 

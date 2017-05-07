@@ -65,6 +65,8 @@ export default class Map extends React.Component<void, Props, State> {
                         <ButtonGroup hidden={!this.props.building}>
                             <Button color='info'  onClick={this.increase}>+</Button>
                             <Button color='info' onClick={this.decrease}>-</Button>
+                            <Button color='info'  onClick={this.rotatateLeft}>left</Button>
+                            <Button color='info' onClick={this.rotatateRight}>right</Button>
                         </ButtonGroup>
                         <p>click twice to finish enter or exit</p>
                     </div>
@@ -80,6 +82,14 @@ export default class Map extends React.Component<void, Props, State> {
 
     decrease = () => {
         this.props.building.decrease()
+    }
+
+    rotatateLeft = () => {
+        this.props.building.rotatateLeft()
+    }
+
+    rotatateRight = () => {
+        this.props.building.rotateRight()
     }
 
     renderAllBuildings = (buildings: Array<Building>): void => {

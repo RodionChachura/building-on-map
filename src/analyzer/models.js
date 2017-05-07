@@ -63,6 +63,16 @@ export class Building {
         this.nodes = u.resizePolygon(this.nodes, 0.9)
         this.googlePolygon.setPath(this.nodes.map(n => n.googleLatLng()))
     }
+
+    rotatateLeft() {
+        const origin = this.googlePolygon.getCenter()
+        this.googlePolygon.rotate(-20, origin)
+    }
+
+    rotateRight() {
+        const origin = this.googlePolygon.getCenter()
+        this.googlePolygon.rotate(20, origin)
+    }
 }
 
 
