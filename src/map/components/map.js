@@ -15,7 +15,7 @@ import './styles.css'
 
 type Props = {
     buildings: Array<Building>,
-    polygon: Nodes,
+    polygon: Array<Node>,
     building: Building,
 
     setPolygon: Function,
@@ -62,12 +62,24 @@ export default class Map extends React.Component<void, Props, State> {
                             <Button color='info'  onClick={this.startEnter}>Enter</Button>
                             <Button color='info' onClick={this.startExit}>Exit</Button>
                         </ButtonGroup>
+                        <ButtonGroup hidden={!this.props.building}>
+                            <Button color='info'  onClick={this.increase}>+</Button>
+                            <Button color='info' onClick={this.decrease}>-</Button>
+                        </ButtonGroup>
                         <p>click twice to finish enter or exit</p>
                     </div>
                 </div>
                 
             </div>
         )
+    }
+
+    increase = () => {
+        this.props.building.increase()
+    }
+
+    decrease = () => {
+        this.props.building.decrease()
     }
 
     renderAllBuildings = (buildings: Array<Building>): void => {

@@ -2,6 +2,7 @@
 
 import {getShape} from '../utils/map'
 import type {Nodes} from '../models'
+import * as u from '../utils/map'
 const m = window.google.maps
 
 
@@ -50,6 +51,17 @@ export class Building {
         // for debug only
         const coordinates = this.nodes.map(node => node.latLng())
         m.event.addListener(this.googlePolygon, 'click', (e) => console.log(coordinates))
+    }
+
+    increase() {
+        this.nodes = u.resizePolygon(this.nodes, 1.1)
+        console.log(this.nodes)
+        this.googlePolygon.setPath(this.nodes.map(n => n.googleLatLng()))
+    }
+
+    decrease() {
+        this.nodes = u.resizePolygon(this.nodes, 0.9)
+        this.googlePolygon.setPath(this.nodes.map(n => n.googleLatLng()))
     }
 }
 

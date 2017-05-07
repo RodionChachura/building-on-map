@@ -118,3 +118,20 @@ export const polygonWithNewCenter = (polygon: Nodes, newCenter: Node): Nodes => 
     return polygon.map(n => new Node(n.lat + latDiff, n.lon + lonDiff))
 }
 
+export const resizePolygon = (polygon: Nodes, ratio: number = 1.1): Nodes => {
+    const center = getPolygonCenter(polygon)
+    return polygon.map((n) => {
+        const latDiff = center.lat - n.lat
+        const lonDiff = center.lon - n.lon
+        if (ratio > 1) {
+            n.lat -= latDiff * (ratio - 1)
+            n.lon -= lonDiff * (ratio - 1)
+        } else {
+            n.lat += latDiff * (1 - ratio)
+            n.lon += lonDiff * (1 - ratio)
+        }
+
+        return n
+    })
+}
+
