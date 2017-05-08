@@ -1,8 +1,7 @@
 // @flow
 
-import type {Nodes} from '../../models'
-import type {BuildingShape} from '../../analyzer/models'
-import {buildingShapesColors} from '../../analyzer/models'
+import type {Nodes, BuildingShape} from '../models/common'
+import {buildingShapesColors} from '../models/common'
 
 const m = window.google.maps
 

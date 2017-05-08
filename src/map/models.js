@@ -3,8 +3,11 @@
 import type {Nodes} from '../models'
 import {Node} from '../models'
 import {Building} from '../analyzer/models.js'
+import * as o from '../utils/gMapsOptions'
 
+const m = window.google.maps
 
+// components staff
 export type State = {
     polygon: Nodes,
     enters: Array<Nodes>,
@@ -14,27 +17,4 @@ export type State = {
 }
 
 
-
-// building under construction
-export class BuildingUC {
-
-}
-
-export class Enter {
-    nodes: Array<Node>
-    google: any
-    map: any
-}
-
-export class Exit {
-    nodes: Array<Node>
-    google: any
-    map: any
-}
-
-export class Construction {
-    building: Building
-    polygon: Polygon
-    enters: Array<Enter>
-    exits: Array<Exit>
-}
+// construction
