@@ -12,3 +12,29 @@ export type State = {
     center: Node,
     building: Building,
 }
+
+
+
+// building under construction
+export class BuildingUC {
+
+}
+
+export class Enter {
+    nodes: Array<Node>
+    google: any
+    map: any
+}
+
+export class Exit {
+    nodes: Array<Node>
+    google: any
+    map: any
+}
+
+export class Construction {
+    building: Building
+    polygon: Polygon
+    enters: Array<Enter>
+    exits: Array<Exit>
+}

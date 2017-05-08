@@ -50,7 +50,8 @@ export const buildingInsideContainer = {
 }
 
 export const buildingOutsideContainer = {
-    fillColor: '#51271e'
+    fillColor: '#ff0000',
+    strokeColor: '#892121',
 }
 
 export const polylineOptions = {

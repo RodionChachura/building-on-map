@@ -6,7 +6,7 @@ const m = window.google.maps
 import * as o from './options'
 import {Node} from '../../models'
 import {Building} from '../../analyzer/models'
-import {getPolygonCenter, polygonWithNewCenter} from '../../utils/map'
+import * as u from '../../utils/map'
 import {statePropertyChangeListener} from '../../utils/common'
 import './styles.css'
 
@@ -95,7 +95,7 @@ export default class Map extends React.Component<void, Props, State> {
     renderAllBuildings = (buildings: Array<Building>): void => {
         buildings.forEach((building) => {
             const options = o.buildingPolygonOptions(building.nodes, building.shape)
-            building.initOnGoogleMap(this.map, options, this.props.setBuilding)
+            building.initOnGoogleMap(this.map, options)
         })
     }
 
@@ -107,7 +107,7 @@ export default class Map extends React.Component<void, Props, State> {
     zoomToBuilding = (zoomed: Building): void => {
         if (this.state.zoomed)
             this.unzoomBuilding()
-        const center = getPolygonCenter(zoomed.nodes)
+        const center = u.getPolygonCenter(zoomed.nodes)
         this.map.setCenter(center.googleLatLng())
         this.setState({zoomed})
         zoomed.googlePolygon.setOptions(o.zoomedBuildingPolygonOptions(zoomed.nodes))
@@ -118,12 +118,21 @@ export default class Map extends React.Component<void, Props, State> {
         if (this.props.building) {
             this.props.building.googlePolygon.setMap(null)
         }
+        const onBuildingChange = (building: Building) => {
+            this.props.setBuilding()
+            if (u.polygonInsideContainer(this.props.polygon, building.nodes)) {
+                building.googlePolygon.setOptions(o.buildingInsideContainer)
+            } else {
+                building.googlePolygon.setOptions(o.buildingOutsideContainer)                
+            }
+        }
         // create building and init on map
-        const polygon = polygonWithNewCenter(selected.nodes, getPolygonCenter(this.props.polygon))
+        const polygon = u.polygonWithNewCenter(selected.nodes, u.getPolygonCenter(this.props.polygon))
         const building = new Building(polygon)
-        building.initOnGoogleMap(this.map, o.buildingOptions(building.nodes))
+        building.initOnGoogleMap(this.map, o.buildingOptions(building.nodes), onBuildingChange)
+        onBuildingChange(building)
         // zoom to the new place on the map
-        const center = getPolygonCenter(polygon)
+        const center = u.getPolygonCenter(polygon)
         this.map.setCenter(center.googleLatLng())
         this.props.setBuilding(building)
     }
