@@ -1,30 +1,11 @@
 // @flow
-
-import type {Nodes, Action} from '../models'
-import {Node} from '../models'
+import type {Action} from '../models/common'
+import {Construction} from '../models/construction'
 import * as t from './actionTypes'
 
-export const setPolygon = (coordinates: Nodes): Action => ({
-    type: t.SET_POLYGON,
-    payload: coordinates,
-})
-
-export const setEnters = (enters: Array<Nodes>): Action => ({
-    type: t.SET_ENTERS,
-    payload: enters,
-})
-
-export const setExits = (exits: Array<Nodes>): Action => ({
-    type: t.SET_EXITS,
-    payload: exits,
-})
-
-export const setCenter = (center: Node): Action => ({
-    type: t.SET_CENTER,
-    payload: center,
-})
-
-export const setBuilding = (polygon: Nodes): Action => ({
-    type: t.SET_BUILDING,
-    payload: polygon,
-})
+export const setConstruction = (construction: Construction): Action => {
+    return {
+        type: t.SET_CONSTRUCTION,
+        payload: construction,
+    }
+}

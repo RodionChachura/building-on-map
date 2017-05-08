@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 import * as t from './actionTypes'
-import type {Action} from '../models'
-import {Building} from './models'
+import type {Action} from '../models/common'
+import {Building} from '../models/analysis'
 import {fromOverpassElementsToBuildings} from '../utils/map'
 
 const fetchBuildingsPending = (): Action => ({

@@ -2,34 +2,18 @@
 
 import React from 'react'
 import {Button, ButtonGroup} from 'reactstrap'
+const m = window.google.maps
 
 import {statePropertyChangeListener} from '../utils/common'
-import * as m from './models'
-import type {Nodes} from './../models'
-import {Node} from './../models'
-import type {BuildingShape} from './models'
+import type {ComponentState, Props} from './models'
+import type {BuildingShape} from '../models/common'
 import './styles.css'
 
-type State = {
-    selectedShape: BuildingShape,
-    analyzerShapes: Array<m.AnalyzerShape>
-}
 
-type Props = {
-    polygon: Nodes,
-    center: Node,
-    buildings: Array<m.Building>,
-
-    fetch: Function,
-    setZoomed: Function,
-    setSelected: Function,
-}
-
-
-export default class Analyzer extends React.Component<void, Props, State> {
+export default class Analyzer extends React.Component<void, Props, ComponentState> {
     // toflow
-    state: State = {
-        selectedShape: null,
+    state: ComponentState = {
+        selectedShape: undefined,
         analyzerShapes: [],
     }
     
@@ -43,7 +27,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
     renderBuildingsWithShape() {
         const list = this.state.analyzerShapes.map((v) => {
             const shape = v.shape
-            const size = v.size()
+            const size = v.size
             const color = {color: m.buildingShapesColors[shape]}
             const backgroundColor = {backgroundColor: m.buildingShapesColors[shape]}
             return (
@@ -64,7 +48,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
 
     render() {
         let dataGathered = this.props.buildings.length > 0
-        let polygonReady = this.props.polygon.length > 0
+        let polygonReady = this.props.construction
         return (
             <div>
                 <Button onClick={() => this.props.fetch()} hidden={dataGathered || !polygonReady}>Analyze nearist buildings</Button>
@@ -77,7 +61,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
         this.setState({selectedShape: shape})
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
         // toflow
-        const building = analyzerShape.zoomed()
+        const building = analyzerShape.zoomed
         this.props.setZoomed(building)
     }
 
@@ -85,7 +69,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
         const shape = this.state.selectedShape
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
         // toflow
-        const building = analyzerShape.zoomed()
+        const building = analyzerShape.zoomed
         this.props.setSelected(building)
     }
 
@@ -93,7 +77,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
         const shape = this.state.selectedShape
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
         // toflow
-        const building = analyzerShape.next()
+        const building = analyzerShape.next
         this.props.setZoomed(building)
     }
 

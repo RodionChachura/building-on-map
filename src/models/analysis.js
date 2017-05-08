@@ -1,8 +1,7 @@
 // @flow
-
-import type {Nodes} from '../models/common'
-import {Node} from '../models/common'
+import type {Nodes, BuildingShape} from '../models/common'
 import * as u from '../utils/map'
+import * as o from '../utils/gMapsOptions'
 
 const m = window.google.maps
 
@@ -25,58 +24,32 @@ export type OverpassElement = OverpassNode | OverpassBuilding
 export class Building {
     nodes: Nodes
     shape: BuildingShape
-    googlePolygon: any
-    onChangeCallback: Function | void
+    google: any
+    map: any
 
     constructor(nodes: Nodes) {
         this.nodes = nodes
-        this.shape = getShape(nodes)
+        this.shape = u.getShape(nodes)
     }
 
-    setPath(path: any = this.googlePolygon.getPath()) {
-        this.googlePolygon.setPath(path)
-        const updatePolygon = () => {
-            const coordinates = path.getArray()
-            this.nodes = coordinates.map(c => new Node(c.lat(), c.lng()))
-            if (this.onChangeCallback) this.onChangeCallback(this)
-        }
-        m.event.addListener(path, 'insert_at', updatePolygon)
-        m.event.addListener(path, 'set_at', updatePolygon)
-        m.event.addListener(path, 'remove_at', updatePolygon)
+    render(map: any): any {
+        const options = o.buildingPolygonOptions(this.nodes, this.shape)
+        const polygon = new m.Polygon(options)
+        polygon.setMap(map)
 
-        // for debug only
-        // const coordinates = this.nodes.map(node => node.latLng())
-        // m.event.addListener(this.googlePolygon, 'click', (e) => console.log(coordinates))
+        // simplified life
+        this.map = map
+        this.google = polygon
     }
 
-    // onChangeCallback: argument will be building itself
-    initOnGoogleMap(map: any, options: any, onChangeCallback?: Function): void {
-        this.onChangeCallback = onChangeCallback
-        this.googlePolygon = new m.Polygon(options)
-        this.googlePolygon.setMap(map)
-        this.setPath()
+    zoom() {
+        const center = u.getPolygonCenter(this.nodes)
+        this.map.setCenter(center.googleLatLng())
+        this.google.setOptions(o.zoomedBuildingPolygonOptions(this.nodes))
     }
 
-    increase() {
-        this.nodes = u.resizePolygon(this.nodes, 1.1)
-        this.setPath(this.nodes.map(n => n.googleLatLng()))
-    }
-
-    decrease() {
-        this.nodes = u.resizePolygon(this.nodes, 0.9)
-        this.setPath(this.nodes.map(n => n.googleLatLng()))
-    }
-
-    rotatateLeft() {
-        const origin = this.googlePolygon.getCenter()
-        this.googlePolygon.rotate(-20, origin)
-        this.setPath()
-    }
-
-    rotateRight() {
-        const origin = this.googlePolygon.getCenter()
-        this.googlePolygon.rotate(20, origin)
-        this.setPath()
+    unzoom() {
+        this.google.setOptions(o.buildingPolygonOptions(this.nodes, this.shape))   
     }
 }
 
@@ -93,20 +66,20 @@ export class AnalyzerShape {
         this.zoomedPosition = 0
     }
 
-    zoomed(): Building {
+    get zoomed(): Building {
         return this.buildings[this.zoomedPosition]
     }
 
-    next(): Building {
-        if (this.zoomedPosition === this.size() - 1) {
+    get next(): Building {
+        if (this.zoomedPosition === this.size - 1) {
             this.zoomedPosition = 0
         } else {
             this.zoomedPosition += 1
         }
-        return this.zoomed()
+        return this.zoomed
     }
 
-    size(): number {
+    get size(): number {
         return this.buildings.length
     }
 }

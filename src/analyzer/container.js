@@ -3,7 +3,7 @@ import store from '../store'
 
 import component from './component'
 import * as a from './actions'
-import {Building} from './models'
+import {Building} from '../models/analysis'
 import { urlForGetAllInsideSquare } from '../utils/map'
 
 const mapStateToProps = (state) => ({

@@ -1,5 +1,4 @@
 // @flow
-
 import type {Nodes, BuildingShape} from '../models/common'
 import {buildingShapesColors} from '../models/common'
 
@@ -71,4 +70,10 @@ export const mapOptions = {
     mapTypeControl: false,
     panControl: false,
     streetViewControl: false,
+}
+
+export const drawingManagerOptions = {
+    drawingControl: false,
+    polygonOptions,
+    polylineOptions,
 }

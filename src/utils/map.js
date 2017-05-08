@@ -1,8 +1,9 @@
 // @flow
-import type {Nodes} from '../models'
-import {Node} from '../models'
-import type {OverpassElement, BuildingShape} from '../analyzer/models'
-import {Building} from '../analyzer/models'
+import type {Nodes} from '../models/common'
+import {Node} from '../models/common'
+import type {OverpassElement} from '../models/analysis'
+import type {BuildingShape} from '../models/common'
+import {Building} from '../models/analysis'
 
 const m = window.google.maps
 

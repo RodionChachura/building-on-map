@@ -1,23 +1,16 @@
 import * as t from './actionTypes'
-import type {State} from './models'
+import type {ReducerState} from './models'
+import {Construction} from '../models/construction'
 
 // toflow
 // null values
-const initialState: State = {
-    polygon: [],
-    enters: [],
-    exits: [],
-    center: null,
-    building: null,
+const initialState: ReducerState = {
+    construction: new Construction(),
 }
 
-export default (state: State = initialState, action: any): State => {
+export default (state: ReducerState = initialState, action: any): ReducerState => {
     switch(action.type) {
-        case t.SET_POLYGON:  return {...state, polygon: action.payload}
-        case t.SET_ENTERS:   return {...state, enters: action.payload}
-        case t.SET_EXITS:    return {...state, exits: action.payload}
-        case t.SET_CENTER:   return {...state, center: action.payload}
-        case t.SET_BUILDING: return {...state, building: action.payload}
+        case t.SET_CONSTRUCTION:  return {...state, construction: action.payload}
         default: return state
     }
 }

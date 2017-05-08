@@ -1,24 +1,17 @@
 import * as t from './actionTypes'
-import * as m from './models'
-import type {Action} from './../models'
+import type {Action} from './../models/common'
+import type {ReducerState} from './models'
 
-type State = {
-    buildings: Array<m.Building>,
-    loading: boolean,
-    error: any,
-    zoomed: m.Building,
-    selected: m.Building,
-}
 
-const initialState: State = {
+const initialState: ReducerState = {
     buildings: [],
     loading: false,
     error: null,
-    zoomed: null,
-    selected: null,
+    zoomed: undefined,
+    selected: undefined,
 }
 
-export default (state: State = initialState, action: Action): State => {
+export default (state: ReducerState = initialState, action: Action): ReducerState => {
     switch(action.type) {
         case t.FETCH_BUILDINGS_PENDING: {
             return {...state, loading: true, error: null}

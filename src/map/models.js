@@ -1,20 +1,22 @@
 // @flow
-
-import type {Nodes} from '../models'
-import {Node} from '../models'
-import {Building} from '../analyzer/models.js'
 import * as o from '../utils/gMapsOptions'
+import {Building} from '../models/analysis'
+import {Construction} from '../models/construction'
 
-const m = window.google.maps
 
-// components staff
-export type State = {
-    polygon: Nodes,
-    enters: Array<Nodes>,
-    exits: Array<Nodes>,
-    center: Node,
-    building: Building,
+export type Props = {
+    buildings: Array<Building>,
+    construction: Construction,
+    selected: Building,
+    zoomed: Building,
+
+    setConstruction: Function,
 }
 
+export type ComponentState = {
+    zoomed: Building,
+}
 
-// construction
+export type ReducerState = {
+    construction: Construction | void,
+}
