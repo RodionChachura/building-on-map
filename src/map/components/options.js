@@ -38,11 +38,20 @@ export const buildingOptions = (nodes: Nodes) => ({
     strokeOpacity: 0.8,
     strokeWeight: 2,
     fillColor: '#df3e20',
-    fillOpacity: 1,
+    fillOpacity: 0.5,
     draggable: true,
-    editable: true,
+    // editable: true,
     zIndex: m.Marker.MAX_ZINDEX + 1
 })
+
+export const buildingInsideContainer = {
+    strokeColor: '#143514',
+    fillColor: '#00ff04',
+}
+
+export const buildingOutsideContainer = {
+    fillColor: '#51271e'
+}
 
 export const polylineOptions = {
     editable: true

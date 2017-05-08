@@ -7,7 +7,7 @@ import * as o from './options'
 import {Node} from '../../models'
 import {Building} from '../../analyzer/models'
 import {getPolygonCenter, polygonWithNewCenter} from '../../utils/map'
-import {statePropertyChangeListener} from '../../utils'
+import {statePropertyChangeListener} from '../../utils/common'
 import './styles.css'
 
 // toflow
@@ -95,7 +95,7 @@ export default class Map extends React.Component<void, Props, State> {
     renderAllBuildings = (buildings: Array<Building>): void => {
         buildings.forEach((building) => {
             const options = o.buildingPolygonOptions(building.nodes, building.shape)
-            building.initOnGoogleMap(this.map, options)
+            building.initOnGoogleMap(this.map, options, this.props.setBuilding)
         })
     }
 
@@ -189,7 +189,6 @@ export default class Map extends React.Component<void, Props, State> {
             const path = polygon.getPath()
             const updatePolygon = () => {
                 const coordinates = path.getArray()
-                console.log(coordinates)
                 const precise = coordinates.map(c => new Node(c.lat(), c.lng()))
                 this.props.setPolygon(precise)
             }

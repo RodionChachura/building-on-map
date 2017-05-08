@@ -135,17 +135,17 @@ export const resizePolygon = (polygon: Nodes, ratio: number = 1.1): Nodes => {
     })
 }
 
-// export const rotatatePolygon = (polygon: Nodes, ratio: number = 1.1) => {
-//     return polygon.map((n) => {
-//         return new Node()
-//     })
-// }
+export  const polygonInsideContainer = (container: Nodes, polygon: Nodes): boolean => {
+    const c = new m.Polygon({paths: container.map(n => ({lat: n.lat, lng: n.lon}))})
+    const outside = polygon.find(n => !m.geometry.poly.containsLocation(n.googleLatLng(), c))
+
+    return outside === undefined? true: false
+}
 
 
 
 
-
-// code take from https://github.com/ahmadnassri/google-maps-polygon-rotate
+// code from https://github.com/ahmadnassri/google-maps-polygon-rotate
 m.LatLng.prototype.distanceTo = function (point: any) {
     const lat = Math.pow(this.lat() - point.lat(), 2)
     const lng = Math.pow(this.lng() - point.lng(), 2)

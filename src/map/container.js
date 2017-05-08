@@ -19,9 +19,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setPolygon: (coordinates: Nodes) => dispatch(s.setPolygon(coordinates)),
     setEnters: (enters: Array<Nodes>) => dispatch(s.setEnters(enters)),
-    setExits: (exits: Array<Nodes>) => dispatch(s.setExits(exits)), 
-    setCenter: (center: Node) => dispatch(s.setCenter(center)),  
-    setBuilding: (polygon: Nodes) => dispatch(s.setBuilding(polygon)),  
+    setExits: (exits: Array<Nodes>) => dispatch(s.setExits(exits)),
+    setCenter: (center: Node) => dispatch(s.setCenter(center)),
+    setBuilding: (polygon: Nodes) => dispatch(s.setBuilding(polygon)),
   }
 }
 
