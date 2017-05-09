@@ -1,8 +1,6 @@
 // @flow
-
-import type {Nodes} from '../../models'
-import type {BuildingShape} from '../../analyzer/models'
-import {buildingShapesColors} from '../../analyzer/models'
+import type {Nodes, BuildingShape} from '../models/common'
+import {buildingShapesColors} from '../models/common'
 
 const m = window.google.maps
 
@@ -50,7 +48,8 @@ export const buildingInsideContainer = {
 }
 
 export const buildingOutsideContainer = {
-    fillColor: '#51271e'
+    fillColor: '#ff0000',
+    strokeColor: '#892121',
 }
 
 export const polylineOptions = {
@@ -71,4 +70,10 @@ export const mapOptions = {
     mapTypeControl: false,
     panControl: false,
     streetViewControl: false,
+}
+
+export const drawingManagerOptions = {
+    drawingControl: false,
+    polygonOptions,
+    polylineOptions,
 }

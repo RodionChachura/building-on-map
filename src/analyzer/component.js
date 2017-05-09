@@ -2,34 +2,34 @@
 
 import React from 'react'
 import {Button, ButtonGroup} from 'reactstrap'
+const m = window.google.maps
 
 import {statePropertyChangeListener} from '../utils/common'
-import * as m from './models'
-import type {Nodes} from './../models'
-import {Node} from './../models'
-import type {BuildingShape} from './models'
+import type {BuildingShape, Nodes} from '../models/common'
+import {buildingShapes, buildingShapesColors} from '../models/common'
+import {Building, AnalyzerShape} from '../models/analysis'
 import './styles.css'
 
-type State = {
-    selectedShape: BuildingShape,
-    analyzerShapes: Array<m.AnalyzerShape>
-}
-
 type Props = {
-    polygon: Nodes,
-    center: Node,
-    buildings: Array<m.Building>,
+    platform: Nodes,
+    buildings: Array<Building>,
+    selected: Building,
+    zoomed: Building,
 
-    fetch: Function,
-    setZoomed: Function,
     setSelected: Function,
+    setZoomed: Function,
+    fetch: Function,
 }
 
+export type State = {
+    selectedShape: BuildingShape,
+    analyzerShapes: Array<AnalyzerShape>,
+}
 
 export default class Analyzer extends React.Component<void, Props, State> {
     // toflow
     state: State = {
-        selectedShape: null,
+        selectedShape: undefined,
         analyzerShapes: [],
     }
     
@@ -43,9 +43,9 @@ export default class Analyzer extends React.Component<void, Props, State> {
     renderBuildingsWithShape() {
         const list = this.state.analyzerShapes.map((v) => {
             const shape = v.shape
-            const size = v.size()
-            const color = {color: m.buildingShapesColors[shape]}
-            const backgroundColor = {backgroundColor: m.buildingShapesColors[shape]}
+            const size = v.size
+            const color = {color: buildingShapesColors[shape]}
+            const backgroundColor = {backgroundColor: buildingShapesColors[shape]}
             return (
                 <li key={shape} className={'row'} onClick={() => this.selectShape(shape)}>
                     <h5 className={'align-middle'}>
@@ -64,10 +64,10 @@ export default class Analyzer extends React.Component<void, Props, State> {
 
     render() {
         let dataGathered = this.props.buildings.length > 0
-        let polygonReady = this.props.polygon.length > 0
+        let platformReady = this.props.platform
         return (
             <div>
-                <Button onClick={() => this.props.fetch()} hidden={dataGathered || !polygonReady}>Analyze nearist buildings</Button>
+                <Button onClick={() => this.props.fetch()} hidden={dataGathered || !platformReady}>Analyze nearist buildings</Button>
                 {this.renderBuildingsWithShape()}
             </div>
         )
@@ -77,7 +77,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
         this.setState({selectedShape: shape})
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
         // toflow
-        const building = analyzerShape.zoomed()
+        const building = analyzerShape.zoomed
         this.props.setZoomed(building)
     }
 
@@ -85,7 +85,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
         const shape = this.state.selectedShape
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
         // toflow
-        const building = analyzerShape.zoomed()
+        const building = analyzerShape.zoomed
         this.props.setSelected(building)
     }
 
@@ -93,17 +93,17 @@ export default class Analyzer extends React.Component<void, Props, State> {
         const shape = this.state.selectedShape
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
         // toflow
-        const building = analyzerShape.next()
+        const building = analyzerShape.next
         this.props.setZoomed(building)
     }
 
     updateAnalyzerShapes = (buildings: Array<m.Building>) => {
-        const analyzerShapes = m.buildingShapes.reduce((res, shape) => {
+        const analyzerShapes = buildingShapes.reduce((res, shape) => {
             const filtered = buildings.filter(b => b.shape === shape)
             if (filtered.length)
-                res.push(new m.AnalyzerShape(shape, filtered))
+                res.push(new AnalyzerShape(shape, filtered))
             return res
-        }, []).sort((a, b) => b.size() - a.size())
+        }, []).sort((a, b) => b.size - a.size)
         this.setState({analyzerShapes})
     }
 }

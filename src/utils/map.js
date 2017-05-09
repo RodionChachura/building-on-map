@@ -1,8 +1,9 @@
 // @flow
-import type {Nodes} from '../models'
-import {Node} from '../models'
-import type {OverpassElement, BuildingShape} from '../analyzer/models'
-import {Building} from '../analyzer/models'
+import type {Nodes} from '../models/common'
+import {Node} from '../models/common'
+import type {OverpassElement} from '../models/analysis'
+import type {BuildingShape} from '../models/common'
+import {Building} from '../models/analysis'
 
 const m = window.google.maps
 
@@ -142,6 +143,8 @@ export  const polygonInsideContainer = (container: Nodes, polygon: Nodes): boole
     return outside === undefined? true: false
 }
 
+export const nodesFromGoogle = (google: any) => 
+    google.getPath().getArray().map(c => new Node(c.lat(), c.lng()))
 
 
 
@@ -179,7 +182,6 @@ m.Polygon.prototype.getCenter = function () {
 }
 m.Polygon.prototype.rotate = function (angle, latLng, map=this.getMap()) {
     if (map === undefined) {
-        console.warn('No valid google maps object found')
         return
     }
     const coords = this.getPath().getArray()
@@ -193,5 +195,11 @@ m.Polygon.prototype.rotate = function (angle, latLng, map=this.getMap()) {
     })
 
     this.setPaths(coords)
+}
+
+// Monkey patching to get Nodes in normal representation
+m.Polygon.prototype.nodes = function() {return nodesFromGoogle(this)}
+m.Polygon.prototype.setPathFromNodes = function(nodes: Nodes) {
+    this.setPath(nodes.map(n => n.googleLatLng()))
 }
 
