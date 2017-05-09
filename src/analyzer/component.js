@@ -5,14 +5,30 @@ import {Button, ButtonGroup} from 'reactstrap'
 const m = window.google.maps
 
 import {statePropertyChangeListener} from '../utils/common'
-import type {ComponentState, Props} from './models'
-import type {BuildingShape} from '../models/common'
+import type {BuildingShape, Nodes} from '../models/common'
+import {buildingShapes, buildingShapesColors} from '../models/common'
+import {Building, AnalyzerShape} from '../models/analysis'
 import './styles.css'
 
+type Props = {
+    platform: Nodes,
+    buildings: Array<Building>,
+    selected: Building,
+    zoomed: Building,
 
-export default class Analyzer extends React.Component<void, Props, ComponentState> {
+    setSelected: Function,
+    setZoomed: Function,
+    fetch: Function,
+}
+
+export type State = {
+    selectedShape: BuildingShape,
+    analyzerShapes: Array<AnalyzerShape>,
+}
+
+export default class Analyzer extends React.Component<void, Props, State> {
     // toflow
-    state: ComponentState = {
+    state: State = {
         selectedShape: undefined,
         analyzerShapes: [],
     }
@@ -28,8 +44,8 @@ export default class Analyzer extends React.Component<void, Props, ComponentStat
         const list = this.state.analyzerShapes.map((v) => {
             const shape = v.shape
             const size = v.size
-            const color = {color: m.buildingShapesColors[shape]}
-            const backgroundColor = {backgroundColor: m.buildingShapesColors[shape]}
+            const color = {color: buildingShapesColors[shape]}
+            const backgroundColor = {backgroundColor: buildingShapesColors[shape]}
             return (
                 <li key={shape} className={'row'} onClick={() => this.selectShape(shape)}>
                     <h5 className={'align-middle'}>
@@ -48,10 +64,10 @@ export default class Analyzer extends React.Component<void, Props, ComponentStat
 
     render() {
         let dataGathered = this.props.buildings.length > 0
-        let polygonReady = this.props.construction
+        let platformReady = this.props.platform
         return (
             <div>
-                <Button onClick={() => this.props.fetch()} hidden={dataGathered || !polygonReady}>Analyze nearist buildings</Button>
+                <Button onClick={() => this.props.fetch()} hidden={dataGathered || !platformReady}>Analyze nearist buildings</Button>
                 {this.renderBuildingsWithShape()}
             </div>
         )
@@ -82,12 +98,12 @@ export default class Analyzer extends React.Component<void, Props, ComponentStat
     }
 
     updateAnalyzerShapes = (buildings: Array<m.Building>) => {
-        const analyzerShapes = m.buildingShapes.reduce((res, shape) => {
+        const analyzerShapes = buildingShapes.reduce((res, shape) => {
             const filtered = buildings.filter(b => b.shape === shape)
             if (filtered.length)
-                res.push(new m.AnalyzerShape(shape, filtered))
+                res.push(new AnalyzerShape(shape, filtered))
             return res
-        }, []).sort((a, b) => b.size() - a.size())
+        }, []).sort((a, b) => b.size - a.size)
         this.setState({analyzerShapes})
     }
 }

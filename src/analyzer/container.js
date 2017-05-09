@@ -2,25 +2,24 @@ import { connect } from 'react-redux'
 import store from '../store'
 
 import component from './component'
-import * as a from './actions'
 import {Building} from '../models/analysis'
-import { urlForGetAllInsideSquare } from '../utils/map'
+import * as u from '../utils/map'
+import * as r from './redux'
 
 const mapStateToProps = (state) => ({
-    polygon: state.map.polygon,
-    center: state.map.center,
+    platform: state.map.platform,
     buildings: state.analyzer.buildings,
 })
 
 const mapDispatchToProps = (dispatch: Function) => ({
     fetch: (km = 1) => {
         if (!store.getState().analyzer.loading) {
-            const center = store.getState().map.center
-            dispatch(a.fetchBuildings(urlForGetAllInsideSquare(center, km)))
+            const center = u.getPolygonCenter(store.getState().map.platform)
+            dispatch(r.fetchBuildings(u.urlForGetAllInsideSquare(center, km)))
         }
     },
-    setZoomed: (zoomed: Building) => dispatch(a.setZoomed(zoomed)),
-    setSelected: (selected: Building) => dispatch(a.setSelected(selected)),
+    setZoomed: (zoomed: Building) => dispatch(r.setZoomed(zoomed)),
+    setSelected: (selected: Building) => dispatch(r.setSelected(selected)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(component)
