@@ -79,7 +79,6 @@ export default class Map extends React.Component<void, Props, void> {
     }
 
     zoomToBuilding = (zoomed: Building): void => {
-        console.log(this.zoomed)
         if (this.zoomed) this.zoomed.unzoom()
         this.zoomed = zoomed
         zoomed.zoom()

@@ -1,13 +1,12 @@
 // @flow
 
 import component from './component'
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
 
-import * as r from './redux'
-import type {Nodes} from '../models/common'
+import * as a from './actions'
 
-const mapStateToProps = (state) => {
-  return {
+const mapStateToProps = (state) => ({
     buildings: state.analyzer.buildings,
     buildingUC: state.map.buildingUC,
     enters: state.map.enters,
@@ -16,16 +15,8 @@ const mapStateToProps = (state) => {
     completed: state.map.completed,
     zoomed: state.analyzer.zoomed,
     selected: state.analyzer.selected,
-  }
-}
+})
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setPlatform: (platform: Nodes) => dispatch(r.setPlatform(platform)),
-    setEnters: (enters: Array<Nodes>) => dispatch(r.setEnters(enters)),
-    setExits: (exits: Array<Nodes>) => dispatch(r.setExits(exits)),
-    setBuildingUC: (buildingUC: Nodes) => dispatch(r.setBuildingUC(buildingUC)),
-  }
-}
+const mapDispatchToProps = (dispatch) => bindActionCreators(a, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(component)

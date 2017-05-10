@@ -5,6 +5,7 @@ import {Button, ButtonGroup} from 'reactstrap'
 const m = window.google.maps
 
 import {statePropertyChangeListener} from '../utils/common'
+import * as u from '../utils/map'
 import type {BuildingShape, Nodes} from '../models/common'
 import {buildingShapes, buildingShapesColors} from '../models/common'
 import {Building, AnalyzerShape} from '../models/analysis'
@@ -13,12 +14,11 @@ import './styles.css'
 type Props = {
     platform: Nodes,
     buildings: Array<Building>,
-    selected: Building,
-    zoomed: Building,
+    loading: boolean,
 
     setSelected: Function,
     setZoomed: Function,
-    fetch: Function,
+    fetchBuildings: Function,
 }
 
 export type State = {
@@ -67,7 +67,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
         let platformReady = this.props.platform
         return (
             <div>
-                <Button onClick={() => this.props.fetch()} hidden={dataGathered || !platformReady}>Analyze nearist buildings</Button>
+                <Button onClick={this.fetchBuildings} hidden={dataGathered || !platformReady}>Analyze nearist buildings</Button>
                 {this.renderBuildingsWithShape()}
             </div>
         )
@@ -105,5 +105,12 @@ export default class Analyzer extends React.Component<void, Props, State> {
             return res
         }, []).sort((a, b) => b.size - a.size)
         this.setState({analyzerShapes})
+    }
+
+    fetchBuildings = () => {
+        if (!this.props.loading) {
+            const center = u.getPolygonCenter(this.props.platform)
+            this.props.fetchBuildings(u.urlForGetAllInsideSquare(center, 1))
+        }
     }
 }
