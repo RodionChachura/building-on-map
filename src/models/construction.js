@@ -14,7 +14,6 @@ export class BuildingUC {
 
     _afterSetPath() {
         const path = this.google.getPath()
-        console.log(path)
         const updatePolygon = () => {
             if (this.onChangeCallback) this.onChangeCallback(this) 
         }
