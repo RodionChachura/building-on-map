@@ -21,6 +21,7 @@ type Props = {
 
     fetchBuildings: Function,
     setBuildingUC: Function,
+    removeBuildings: Function,
 }
 
 export type State = {
@@ -40,10 +41,12 @@ export default class Analyzer extends React.Component<void, Props, State> {
     constructor(props: Props) {
         super(props)
         statePropertyChangeListener('manager.analyzer.buildings', this.updateAnalyzerShapes)
+        // this.updateBuildings()
+        statePropertyChangeListener('map.platform', this.updateBuildings)
     }
 
 
-    renderBuildingsWithShape() {
+    /*renderBuildingsWithShape() {
         const list = this.state.analyzerShapes.map((v) => {
             const shape = v.shape
             const size = v.size
@@ -63,16 +66,40 @@ export default class Analyzer extends React.Component<void, Props, State> {
             )}
         )
         return <ul className={'statistics'}>{list}</ul>
-    }
+    }*/
 
     render() {
-        let dataGathered = this.props.buildings.length > 0
-        let platformReady = this.props.platform
-        return (
+        // let dataGathered = this.props.buildings.length > 0
+        // let platformReady = this.props.platform
+        // console.log(dataGathered, platformReady)
+        /*return (
             <div>
                 <Button onClick={this.fetchBuildings} hidden={dataGathered || !platformReady}>Analyze nearist buildings</Button>
                 {this.renderBuildingsWithShape()}
             </div>
+        )*/
+
+
+        const list = this.state.analyzerShapes.map((v) => {
+            const shape = v.shape
+            const size = v.size
+            const color = {color: buildingShapesColors[shape]}
+            const backgroundColor = {backgroundColor: buildingShapesColors[shape]}
+            return (
+                <li key={shape} className={'row'} onMouseEnter={() => this.selectShape(shape)}>
+                    <h5 className={'align-middle'}>
+                        Number of <span style={color}>{shape}</span> buildings: 
+                        <span style={color} className={'len'}>{size}</span>
+                    </h5>
+                    <ButtonGroup className={'buttons'} hidden={this.state.selectedShape !== shape}>
+                        <Button style={backgroundColor} onClick={this.select}>Select</Button>
+                        <Button style={backgroundColor} onClick={this.next}>Next</Button>
+                    </ButtonGroup>
+                </li>
+            )}
+        )
+        return (
+            <ul className={'statistics'}>{list}</ul>
         )
     }
 
@@ -130,10 +157,15 @@ export default class Analyzer extends React.Component<void, Props, State> {
         this.setState({analyzerShapes})
     }
 
-    fetchBuildings = () => {
+    updateBuildings = (platform: Nodes) => {
         if (!this.props.loading) {
-            const center = u.getPolygonCenter(this.props.platform)
-            this.props.fetchBuildings(u.urlForGetAllInsideSquare(center, 1))
+            if (platform) {
+                const center = u.getPolygonCenter(platform)
+                this.props.fetchBuildings(u.urlForGetAllInsideSquare(center, 1))
+            } else {
+                this.props.buildings.forEach(b => b.kill())
+                this.props.removeBuildings()
+            }
         }
     }
 

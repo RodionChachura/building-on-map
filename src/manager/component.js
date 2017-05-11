@@ -35,8 +35,8 @@ export default class Manager extends React.Component<void, Props, State> {
     }
 
     render() {
-            return (this.props.platform)? (
-                <div>
+            return (
+                <div hidden={!this.props.platform}>
                     <Nav tabs>
                     <NavItem>
                         <NavLink
@@ -70,7 +70,7 @@ export default class Manager extends React.Component<void, Props, State> {
                         <Button color='info' onClick={() => this.props.buildingUC.rotatateRight()}>right</Button>
                     </ButtonGroup>
                 </div>
-            ): null
+            )
   }
 }
 

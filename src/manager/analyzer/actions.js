@@ -6,6 +6,7 @@ import {fromOverpassElementsToBuildings} from '../../utils/map'
 export const fetchBuildingsPending = createAction('fetch building from overpass API')
 export const fetchBuildingsSuccess = createAction('buildings successfully fetched from overpass API')
 export const fetchBuildingsFailure = createAction('error during fetching buildings from overpass API')
+export const removeBuildings = createAction('remove all analyzed buildings')
 
 export const fetchBuildings = (url: string) => (dispatch: Function) => {
     dispatch(fetchBuildingsPending())

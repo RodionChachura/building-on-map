@@ -21,7 +21,7 @@ export class BuildingUC {
         updatePolygon()
         m.event.addListener(path, 'insert_at', updatePolygon) 
         m.event.addListener(path, 'set_at', updatePolygon) 
-        m.event.addListener(path, 'remove_at', updatePolygon) 
+        m.event.addListener(path, 'remove_at', updatePolygon)
     }
 
     constructor(nodes: Nodes, onChangeCallback: Function) {

@@ -51,6 +51,10 @@ export class Building {
     unzoom() {
         this.google.setOptions(o.buildingPolygonOptions(this.nodes, this.shape))   
     }
+
+    kill() {
+        this.google.setMap(null)
+    }
 }
 
 
