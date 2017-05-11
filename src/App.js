@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { Provider } from 'react-redux';
+import { Provider } from 'react-redux'
 
 import store from './store'
 // import JsonView from './jsonview/container'
 import Map from './map/container'
-import Analyzer from './analyzer/container'
+import Manager from './manager/container'
 import './App.css'
 
 
@@ -18,12 +18,12 @@ class App extends Component {
               <Map />
             </div>
             <div className={'col-12 col-lg-5'}>
-              <Analyzer />
+              <Manager />
             </div>
           </div>
         </div>
       </Provider>
-    );
+    )
   }
 }
 

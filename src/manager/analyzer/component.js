@@ -4,25 +4,27 @@ import React from 'react'
 import {Button, ButtonGroup} from 'reactstrap'
 const m = window.google.maps
 
-import {statePropertyChangeListener} from '../utils/common'
-import * as u from '../utils/map'
-import type {BuildingShape, Nodes} from '../models/common'
-import {buildingShapes, buildingShapesColors} from '../models/common'
-import {Building, AnalyzerShape} from '../models/analysis'
+import {statePropertyChangeListener} from '../../utils/common'
+import * as u from '../../utils/map'
+import type {BuildingShape, Nodes} from '../../models/common'
+import {buildingShapes, buildingShapesColors} from '../../models/common'
+import {Building, AnalyzerShape} from '../../models/analysis'
+import {BuildingUC} from '../../models/construction'
 import './styles.css'
+import {map} from '../../map/global'
 
 type Props = {
     platform: Nodes,
     buildings: Array<Building>,
     loading: boolean,
+    buildingUC: BuildingUC,
 
-    setSelected: Function,
-    setZoomed: Function,
     fetchBuildings: Function,
+    setBuildingUC: Function,
 }
 
 export type State = {
-    selectedShape: BuildingShape,
+    selectedShape: BuildingShape | void,
     analyzerShapes: Array<AnalyzerShape>,
 }
 
@@ -33,10 +35,11 @@ export default class Analyzer extends React.Component<void, Props, State> {
         analyzerShapes: [],
     }
     
+    zoomed: any
 
     constructor(props: Props) {
         super(props)
-        statePropertyChangeListener('analyzer.buildings', this.updateAnalyzerShapes)
+        statePropertyChangeListener('manager.analyzer.buildings', this.updateAnalyzerShapes)
     }
 
 
@@ -47,7 +50,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
             const color = {color: buildingShapesColors[shape]}
             const backgroundColor = {backgroundColor: buildingShapesColors[shape]}
             return (
-                <li key={shape} className={'row'} onClick={() => this.selectShape(shape)}>
+                <li key={shape} className={'row'} onMouseEnter={() => this.selectShape(shape)}>
                     <h5 className={'align-middle'}>
                         Number of <span style={color}>{shape}</span> buildings: 
                         <span style={color} className={'len'}>{size}</span>
@@ -59,7 +62,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
                 </li>
             )}
         )
-        return <ul>{list}</ul>
+        return <ul className={'statistics'}>{list}</ul>
     }
 
     render() {
@@ -74,27 +77,47 @@ export default class Analyzer extends React.Component<void, Props, State> {
     }
 
     selectShape(shape: BuildingShape) {
+
         this.setState({selectedShape: shape})
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
-        // toflow
-        const building = analyzerShape.zoomed
-        this.props.setZoomed(building)
+        if (analyzerShape) {
+            const building = analyzerShape.zoomed
+            this.zoomToBuilding(building)
+        }
     }
 
     select = () => {
         const shape = this.state.selectedShape
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
-        // toflow
-        const building = analyzerShape.zoomed
-        this.props.setSelected(building)
+        if (analyzerShape) {
+            const building = analyzerShape.zoomed
+            const oldPolygon = building.nodes
+            const newCenter = u.getPolygonCenter(this.props.platform)
+            map.panTo(newCenter.googleLatLng())           
+            const newPolygon = u.polygonWithNewCenter(oldPolygon, newCenter)
+            if (this.props.buildingUC)
+                this.props.buildingUC.kill()
+            const onBuildingChange = (building: BuildingUC) => {
+                // this.props.setBuildingUC(u.nodesFromGoogle(building.google))
+                if (u.polygonInsideContainer(this.props.platform, u.nodesFromGoogle(building.google))) {
+                    building.makeGreen()
+                } else {
+                    building.makeRed()
+                }
+            }
+            const newBuilding = new BuildingUC(newPolygon, onBuildingChange)
+            this.props.setBuildingUC(newBuilding)
+            onBuildingChange(newBuilding)
+        }
     }
 
     next = () => {
         const shape = this.state.selectedShape
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
-        // toflow
-        const building = analyzerShape.next
-        this.props.setZoomed(building)
+        if (analyzerShape) {
+            const building = analyzerShape.next
+            this.zoomToBuilding(building)
+        }
     }
 
     updateAnalyzerShapes = (buildings: Array<m.Building>) => {
@@ -112,5 +135,12 @@ export default class Analyzer extends React.Component<void, Props, State> {
             const center = u.getPolygonCenter(this.props.platform)
             this.props.fetchBuildings(u.urlForGetAllInsideSquare(center, 1))
         }
+    }
+
+    // moved from map component
+    zoomToBuilding = (building: Building) => {
+        if (this.zoomed) this.zoomed.unzoom()
+        this.zoomed = building
+        building.zoom()
     }
 }

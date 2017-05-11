@@ -1,7 +1,7 @@
 import {createAction} from 'redux-act'
 import axios from 'axios'
 
-import {fromOverpassElementsToBuildings} from '../utils/map'
+import {fromOverpassElementsToBuildings} from '../../utils/map'
 
 export const fetchBuildingsPending = createAction('fetch building from overpass API')
 export const fetchBuildingsSuccess = createAction('buildings successfully fetched from overpass API')
@@ -15,6 +15,3 @@ export const fetchBuildings = (url: string) => (dispatch: Function) => {
         .then(json => dispatch(fetchBuildingsSuccess(json)))
         .catch(error => dispatch(fetchBuildingsFailure(error)))
 }
-
-export const setZoomed = createAction()
-export const setSelected = createAction()

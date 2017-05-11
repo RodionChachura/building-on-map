@@ -1,0 +1,27 @@
+.len {
+    padding: 10px;
+}
+
+
+
+.statistics {
+    padding-left: 10px;
+
+    li {
+        cursor: pointer;
+        padding: 10px;
+
+        &:hover {
+            border: 2px solid black;
+        }
+
+        h5 {
+            padding-top: 10px
+        }
+    }
+}
+
+
+// .buttons {
+//     padding-bottom: 10px;
+// }

@@ -7,7 +7,7 @@ const getProperty = (propertyName: string, object: any): any => {
         property = property[p]
     })
 
-    return property;
+    return property
 }
 
 export const statePropertyChangeListener = (propertyName: string, callback: Function): void => {
