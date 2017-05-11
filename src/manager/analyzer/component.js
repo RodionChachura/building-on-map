@@ -11,13 +11,12 @@ import {buildingShapes, buildingShapesColors} from '../../models/common'
 import {Building, AnalyzerShape} from '../../models/analysis'
 import {BuildingUC} from '../../models/construction'
 import './styles.css'
+import {map} from '../../map/global'
 
 type Props = {
     platform: Nodes,
     buildings: Array<Building>,
     loading: boolean,
-    map: any,
-    drawingManager: any,
     buildingUC: BuildingUC,
 
     fetchBuildings: Function,
@@ -51,7 +50,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
             const color = {color: buildingShapesColors[shape]}
             const backgroundColor = {backgroundColor: buildingShapesColors[shape]}
             return (
-                <li key={shape} className={'row'} onClick={() => this.selectShape(shape)}>
+                <li key={shape} className={'row'} onMouseEnter={() => this.selectShape(shape)}>
                     <h5 className={'align-middle'}>
                         Number of <span style={color}>{shape}</span> buildings: 
                         <span style={color} className={'len'}>{size}</span>
@@ -78,6 +77,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
     }
 
     selectShape(shape: BuildingShape) {
+
         this.setState({selectedShape: shape})
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
         if (analyzerShape) {
@@ -91,7 +91,23 @@ export default class Analyzer extends React.Component<void, Props, State> {
         const analyzerShape = this.state.analyzerShapes.find(v => v.shape === shape)
         if (analyzerShape) {
             const building = analyzerShape.zoomed
-            this.selectBuilding(building)
+            const oldPolygon = building.nodes
+            const newCenter = u.getPolygonCenter(this.props.platform)
+            map.panTo(newCenter.googleLatLng())           
+            const newPolygon = u.polygonWithNewCenter(oldPolygon, newCenter)
+            if (this.props.buildingUC)
+                this.props.buildingUC.kill()
+            const onBuildingChange = (building: BuildingUC) => {
+                // this.props.setBuildingUC(u.nodesFromGoogle(building.google))
+                if (u.polygonInsideContainer(this.props.platform, u.nodesFromGoogle(building.google))) {
+                    building.makeGreen()
+                } else {
+                    building.makeRed()
+                }
+            }
+            const newBuilding = new BuildingUC(newPolygon, onBuildingChange)
+            this.props.setBuildingUC(newBuilding)
+            onBuildingChange(newBuilding)
         }
     }
 
@@ -121,34 +137,10 @@ export default class Analyzer extends React.Component<void, Props, State> {
         }
     }
 
-
-
     // moved from map component
-    zoomToBuilding = (building: Building): void => {
+    zoomToBuilding = (building: Building) => {
         if (this.zoomed) this.zoomed.unzoom()
         this.zoomed = building
         building.zoom()
-    }
-
-    // todo:
-    // problem with state update on every change
-    selectBuilding = (selected: Building): void => {
-        const oldPolygon = selected.nodes
-        const newCenter = u.getPolygonCenter(this.props.platform)
-        const newPolygon = u.polygonWithNewCenter(oldPolygon, newCenter)
-        if (this.props.buildingUC)
-            this.props.buildingUC.kill()
-        const onBuildingChange = (building: BuildingUC) => {
-            // this.props.setBuildingUC(u.nodesFromGoogle(building.google))
-            if (u.polygonInsideContainer(this.props.platform, u.nodesFromGoogle(building.google))) {
-                building.makeGreen()
-            } else {
-                building.makeRed()
-            }
-        }
-        this.props.setBuildingUC(new BuildingUC(this.props.map, newPolygon, onBuildingChange))
-        onBuildingChange(this.props.buildingUC)
-        const center = u.getPolygonCenter(this.props.platform)
-        this.props.map.setCenter(center.googleLatLng())
     }
 }

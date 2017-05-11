@@ -10,6 +10,8 @@ import {statePropertyChangeListener} from '../utils/common'
 import * as u from '../utils/map'
 import * as o from '../utils/gMapsOptions'
 import './styles.css'
+import {map, drawingManager, init} from './global'
+
 
 
 type Props = {
@@ -20,8 +22,6 @@ type Props = {
     setPlatform: Function,
     setEnters: Function,
     setExits: Function,
-    setMap: Function,
-    setDrawingManager: Function,
 }
 
 
@@ -31,9 +31,6 @@ export default class Map extends React.Component<void, Props, void> {
     buildingUC: BuildingUC
     enters = []
     exits = []
-
-    map: any
-    drawingManager: any
 
     constructor(props: Props) {
         super(props)
@@ -69,23 +66,23 @@ export default class Map extends React.Component<void, Props, void> {
     }
 
     renderAllBuildings = (buildings: Array<Building>): void => {
-        buildings.forEach(b => b.render(this.map))
+        buildings.forEach(b => b.render())
     }
 
     startPlatform = () => {
-        this.drawingManager.setMap(this.map)
-        this.drawingManager.setDrawingMode(m.drawing.OverlayType.POLYGON)
+        drawingManager.setMap(map)
+        drawingManager.setDrawingMode(m.drawing.OverlayType.POLYGON)
     }
 
     startPolyline = (options: any, addPolylineCallback: Function) => {
-        this.drawingManager.setMap(this.map)
-        this.drawingManager.setDrawingMode(m.drawing.OverlayType.POLYLINE)
-        this.drawingManager.setOptions({polylineOptions: options})
-        m.event.addListenerOnce(this.drawingManager, 'polylinecomplete', (polyline) => {
+        drawingManager.setMap(map)
+        drawingManager.setDrawingMode(m.drawing.OverlayType.POLYLINE)
+        drawingManager.setOptions({polylineOptions: options})
+        m.event.addListenerOnce(drawingManager, 'polylinecomplete', (polyline) => {
             const coordinates = polyline.getPath().getArray().slice(0, 2)
             polyline.setPath(coordinates)
             addPolylineCallback(polyline)
-            this.drawingManager.setMap(null)
+            drawingManager.setMap(null)
         })
     }
 
@@ -109,13 +106,9 @@ export default class Map extends React.Component<void, Props, void> {
     }
 
     componentDidMount() {
-        this.map = new m.Map(this.refs.map, o.mapOptions)
-        this.drawingManager = new m.drawing.DrawingManager(o.drawingManagerOptions)
-        this.drawingManager.setMap(this.map)
-        this.props.setMap({map: this.map})
-        this.props.setDrawingManager({drawingManager: this.drawingManager})
+        init(this.refs.map)
 
-        m.event.addListener(this.drawingManager, 'polygoncomplete', (polygon) => {
+        m.event.addListener(drawingManager, 'polygoncomplete', (polygon) => {
             const path = polygon.getPath()
             const updatePolygon = () => {
                 const platform = u.nodesFromGoogle(polygon)
@@ -123,7 +116,7 @@ export default class Map extends React.Component<void, Props, void> {
             }
             updatePolygon()
             this.platform = polygon
-            this.drawingManager.setMap(null)
+            drawingManager.setMap(null)
             m.event.addListener(path, 'insert_at', updatePolygon)
             m.event.addListener(path, 'set_at', updatePolygon)
             m.event.addListener(path, 'remove_at', updatePolygon)

@@ -4,6 +4,8 @@ import * as u from '../utils/map'
 import * as o from '../utils/gMapsOptions'
 
 const m = window.google.maps
+import {map} from '../map/global'
+
 
 
 export type OverpassNode = {
@@ -25,26 +27,24 @@ export class Building {
     nodes: Nodes
     shape: BuildingShape
     google: any
-    map: any
 
     constructor(nodes: Nodes) {
         this.nodes = nodes
         this.shape = u.getShape(nodes)
     }
 
-    render(map: any): any {
+    render() {
         const options = o.buildingPolygonOptions(this.nodes, this.shape)
         const polygon = new m.Polygon(options)
         polygon.setMap(map)
 
         // simplified life
-        this.map = map
         this.google = polygon
     }
 
     zoom() {
         const center = u.getPolygonCenter(this.nodes)
-        this.map.setCenter(center.googleLatLng())
+        map.panTo(center.googleLatLng())
         this.google.setOptions(o.zoomedBuildingPolygonOptions(this.nodes))
     }
 

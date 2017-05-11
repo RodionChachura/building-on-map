@@ -5,12 +5,13 @@ import * as o from '../utils/gMapsOptions'
 import * as u from '../utils/map'
 
 const m = window.google.maps
+import {map} from '../map/global'
+
 
 // building under construction
 export class BuildingUC {
     onChangeCallback: Function
     google: any
-    map: any
 
     _afterSetPath() {
         const path = this.google.getPath()
@@ -23,11 +24,10 @@ export class BuildingUC {
         m.event.addListener(path, 'remove_at', updatePolygon) 
     }
 
-    constructor(map: any, nodes: Nodes, onChangeCallback: Function) {
+    constructor(nodes: Nodes, onChangeCallback: Function) {
         const options = o.buildingOptions(nodes)
-        this.map = map
         this.google = new m.Polygon(options)
-        this.google.setMap(this.map)
+        this.google.setMap(map)
         this.onChangeCallback = onChangeCallback
         this._afterSetPath()
     }
