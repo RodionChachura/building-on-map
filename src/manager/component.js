@@ -68,9 +68,16 @@ export default class Manager extends React.Component<void, Props, State> {
                         <Button color='info' onClick={() => this.props.buildingUC.decrease()}>-</Button>
                         <Button color='info' onClick={() => this.props.buildingUC.rotatateLeft()}>left</Button>
                         <Button color='info' onClick={() => this.props.buildingUC.rotatateRight()}>right</Button>
+                        <Button color='warning' onClick={this.deleteBuildingUC}>Remove building</Button>
                     </ButtonGroup>
                 </div>
             )
-  }
+    }
+
+
+    deleteBuildingUC = () => {
+        this.props.buildingUC.kill()
+        this.props.setBuildingUC(null)
+    }
 }
 
