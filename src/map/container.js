@@ -5,16 +5,12 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
 import * as a from './actions'
+import type {State} from '../rootReducer'
 
-const mapStateToProps = (state) => ({
-    buildings: state.analyzer.buildings,
-    buildingUC: state.map.buildingUC,
+const mapStateToProps = (state: State) => ({
     enters: state.map.enters,
     exits: state.map.exits,
     platform: state.map.platform,
-    completed: state.map.completed,
-    zoomed: state.analyzer.zoomed,
-    selected: state.analyzer.selected,
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(a, dispatch)

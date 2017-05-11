@@ -13,19 +13,15 @@ import './styles.css'
 
 
 type Props = {
-    buildings: Array<Building>,
-    buildingUC: Nodes,
     enters: Array<Nodes>,
     exits: Array<Nodes>,
     platform: Nodes,
-    completed: boolean,
-    zoomed: Building,
-    selected: Building,
 
     setPlatform: Function,
     setEnters: Function,
     setExits: Function,
-    setBuildingUC: Function,
+    setMap: Function,
+    setDrawingManager: Function,
 }
 
 
@@ -41,9 +37,7 @@ export default class Map extends React.Component<void, Props, void> {
 
     constructor(props: Props) {
         super(props)
-        statePropertyChangeListener('analyzer.buildings', this.renderAllBuildings)
-        statePropertyChangeListener('analyzer.zoomed', this.zoomToBuilding)
-        statePropertyChangeListener('analyzer.selected', this.selectBuilding)
+        statePropertyChangeListener('manager.analyzer.buildings', this.renderAllBuildings)
     }
     
     render() {
@@ -78,43 +72,9 @@ export default class Map extends React.Component<void, Props, void> {
         buildings.forEach(b => b.render(this.map))
     }
 
-    zoomToBuilding = (zoomed: Building): void => {
-        if (this.zoomed) this.zoomed.unzoom()
-        this.zoomed = zoomed
-        zoomed.zoom()
-    }
-
-    // todo:
-    // problem with state update on every change
-    selectBuilding = (selected: Building): void => {
-        const oldPolygon = selected.nodes
-        const newCenter = u.getPolygonCenter(this.props.platform)
-        const newPolygon = u.polygonWithNewCenter(oldPolygon, newCenter)
-        if (this.buildingUC)
-            this.buildingUC.kill()
-        const onBuildingChange = (building: BuildingUC) => {
-            // this.props.setBuildingUC(u.nodesFromGoogle(building.google))
-            if (u.polygonInsideContainer(this.props.platform, u.nodesFromGoogle(building.google))) {
-                building.makeGreen()
-            } else {
-                building.makeRed()
-            }
-        }
-        this.buildingUC = new BuildingUC(this.map, newPolygon, onBuildingChange)
-        onBuildingChange(this.buildingUC)
-        this.props.setBuildingUC(u.nodesFromGoogle(this.buildingUC.google))
-        const center = u.getPolygonCenter(this.props.platform)
-        this.map.setCenter(center.googleLatLng())
-    }
-
     startPlatform = () => {
         this.drawingManager.setMap(this.map)
         this.drawingManager.setDrawingMode(m.drawing.OverlayType.POLYGON)
-        // m.event.addListenerOnce(this.drawingManager, 'polygoncomplete', (polygon) => {
-        //     this.platform = polygon
-        //     this.props.setPlatform(u.nodesFromGoogle(polygon))
-        //     this.drawingManager.setMap(null)
-        // })
     }
 
     startPolyline = (options: any, addPolylineCallback: Function) => {
@@ -152,6 +112,8 @@ export default class Map extends React.Component<void, Props, void> {
         this.map = new m.Map(this.refs.map, o.mapOptions)
         this.drawingManager = new m.drawing.DrawingManager(o.drawingManagerOptions)
         this.drawingManager.setMap(this.map)
+        this.props.setMap({map: this.map})
+        this.props.setDrawingManager({drawingManager: this.drawingManager})
 
         m.event.addListener(this.drawingManager, 'polygoncomplete', (polygon) => {
             const path = polygon.getPath()
