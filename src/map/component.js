@@ -18,10 +18,12 @@ type Props = {
     enters: Array<Nodes>,
     exits: Array<Nodes>,
     platform: Nodes,
+    completed: boolean,
 
     setPlatform: Function,
     setEnters: Function,
     setExits: Function,
+    completeConstruction: Function,
 }
 
 
@@ -41,18 +43,18 @@ export default class Map extends React.Component<void, Props, void> {
         return (
             <div>
                 <div ref='map' className={'map'}></div>
-                <div className={'row justify-content-center manage'}>
+                <div hidden={this.props.completed} className={'row justify-content-center manage'}>
                     <Button color='info' hidden={this.props.platform} onClick={this.startPlatform}>Start Platform</Button>
                     <div hidden={!this.props.platform}>
                         <ButtonGroup>
                             <Button color='warning' onClick={this.deletePlatform}>Remove Platform</Button>
                             <Button color='info'  onClick={this.startEnter}>Enter</Button>
                             <Button color='info' onClick={this.startExit}>Exit</Button>
+                            <Button color='success' onClick={this.props.completeConstruction}>Complete construction</Button>
                         </ButtonGroup>
                         {/*<p>click twice to finish enter or exit</p>*/}
                     </div>
                 </div>
-                
             </div>
         )
     }

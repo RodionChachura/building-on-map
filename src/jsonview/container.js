@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 
 const mapStateToProps = (state) => {
   return {
-    value: state.map
+    value: state.map,
+    completed: state.map.completed,
   }
 }
 

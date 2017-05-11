@@ -14,6 +14,7 @@ type Props = {
     buildingUC: BuildingUC,
     platform: Nodes,
     mode: Mode,
+    completed: boolean,
 
     setBuildingUC: Function,
 }
@@ -36,7 +37,7 @@ export default class Manager extends React.Component<void, Props, State> {
 
     render() {
             return (
-                <div hidden={!this.props.platform}>
+                <div hidden={!this.props.platform || this.props.completed}>
                     <Nav tabs>
                     <NavItem>
                         <NavLink
