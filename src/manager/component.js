@@ -1,5 +1,6 @@
 import React from 'react'
-import {TabContent, TabPane, Nav, NavItem, NavLink} from 'reactstrap'
+import {TabContent, TabPane, Nav, NavItem, NavLink, Button, ButtonGroup} from 'reactstrap'
+
 import classnames from 'classnames'
 
 import {BuildingUC} from '../models/construction'
@@ -42,7 +43,7 @@ export default class Manager extends React.Component<void, Props, State> {
                         className={classnames({ active: this.state.mode === 'analyzer' })}
                         onClick={() => this.toggle('analyzer')}
                         >
-                        From analyzed buildings
+                        Take from analyzed buildings
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -50,7 +51,7 @@ export default class Manager extends React.Component<void, Props, State> {
                         className={classnames({ active: this.state.mode === 'shaper' })}
                         onClick={() => this.toggle('shaper')}
                         >
-                        By yourself
+                        Construct by yourself
                         </NavLink>
                     </NavItem>
                     </Nav>
@@ -62,6 +63,12 @@ export default class Manager extends React.Component<void, Props, State> {
                         <Shaper />
                     </TabPane>
                     </TabContent>
+                    <ButtonGroup hidden={!this.props.buildingUC}>
+                        <Button color='info' onClick={() => this.props.buildingUC.increase()}>+</Button>
+                        <Button color='info' onClick={() => this.props.buildingUC.decrease()}>-</Button>
+                        <Button color='info' onClick={() => this.props.buildingUC.rotatateLeft()}>left</Button>
+                        <Button color='info' onClick={() => this.props.buildingUC.rotatateRight()}>right</Button>
+                    </ButtonGroup>
                 </div>
             ): null
   }

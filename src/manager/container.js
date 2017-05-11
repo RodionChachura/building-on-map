@@ -7,8 +7,7 @@ import * as a from './actions'
 
 const mapStateToProps = (state) => ({
     platform: state.map.platform,
-    buildingUC: state.manager.buildingUC,
-    mode: state.manager.mode,
+    buildingUC: state.manager.common.buildingUC,
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(a, dispatch)

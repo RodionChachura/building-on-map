@@ -49,14 +49,6 @@ export default class Map extends React.Component<void, Props, void> {
                             <Button color='info'  onClick={this.startEnter}>Enter</Button>
                             <Button color='info' onClick={this.startExit}>Exit</Button>
                         </ButtonGroup>
-                        {this.props.buildingUC &&
-                            <ButtonGroup >
-                                <Button color='info' onClick={() => this.buildingUC.increase()}>+</Button>
-                                <Button color='info' onClick={() => this.buildingUC.decrease()}>-</Button>
-                                <Button color='info' onClick={() => this.buildingUC.rotatateLeft()}>left</Button>
-                                <Button color='info' onClick={() => this.buildingUC.rotatateRight()}>right</Button>
-                            </ButtonGroup>
-                        }
                         {/*<p>click twice to finish enter or exit</p>*/}
                     </div>
                 </div>
