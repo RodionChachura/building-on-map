@@ -1,6 +1,15 @@
 // @flow
 const m = window.google.maps
 
+export class XY {
+    x: number
+    y: number
+    constructor(x: number, y: number) {
+        this.x = x
+        this.y = y
+    }
+}
+
 export class Node {
     lat: number
     lon: number
@@ -12,6 +21,16 @@ export class Node {
 
     googleLatLng = () => new m.LatLng(this.lat, this.lon)
     latLng = () => ({lat: this.lat, lng: this.lon})
+
+    inXYRelatively(origin: Node): XY {
+        const db = m.geometry.spherical.computeDistanceBetween
+        let x = db(origin.googleLatLng(), new Node(this.lat, origin.lon).googleLatLng())
+        let y = db(origin.googleLatLng(), new Node(origin.lat, this.lon).googleLatLng())
+        if (this.lon < origin.lon) x *= -1
+        if (this.lat < origin.lat) y *= -1
+
+        return new XY(x, y)
+    }
 }
 
 export type Nodes = Array<Node>

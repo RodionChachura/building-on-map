@@ -14,8 +14,8 @@ export const toDegrees = (radians: number): number => radians * 180 / Math.PI
 export const latInKm  = 110.574 //km
 export const lonInKm = (lat: number): number => 111.320 * Math.cos(toRadians(lat))
 
-const inLat = (km: number): number => km / latInKm
-const inLon = (lat: number, km: number): number => km / lonInKm(lat)
+export const inLat = (km: number): number => km / latInKm
+export const inLon = (lat: number, km: number): number => km / lonInKm(lat)
 
 export const urlForGetAllInsideSquare = (center: Node, km: number): string => {
     const lat = inLat(km)
@@ -147,7 +147,6 @@ export const nodesFromGoogle = (google: any) =>
     google.getPath().getArray().map(c => new Node(c.lat(), c.lng()))
 
 
-
 // code from https://github.com/ahmadnassri/google-maps-polygon-rotate
 m.LatLng.prototype.distanceTo = function (point: any) {
     const lat = Math.pow(this.lat() - point.lat(), 2)
@@ -202,4 +201,3 @@ m.Polygon.prototype.nodes = function() {return nodesFromGoogle(this)}
 m.Polygon.prototype.setPathFromNodes = function(nodes: Nodes) {
     this.setPath(nodes.map(n => n.googleLatLng()))
 }
-
