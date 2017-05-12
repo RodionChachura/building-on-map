@@ -43,6 +43,7 @@ export default class Analyzer extends React.Component<void, Props, State> {
         statePropertyChangeListener('manager.analyzer.buildings', this.updateAnalyzerShapes)
         // this.updateBuildings()
         statePropertyChangeListener('map.platform', this.updateBuildings)
+        statePropertyChangeListener('map.completed', this.killBuildings)
     }
 
 
@@ -163,10 +164,14 @@ export default class Analyzer extends React.Component<void, Props, State> {
                 const center = u.getPolygonCenter(platform)
                 this.props.fetchBuildings(u.urlForGetAllInsideSquare(center, 1))
             } else {
-                this.props.buildings.forEach(b => b.kill())
-                this.props.removeBuildings()
+                this.killBuildings()
             }
         }
+    }
+
+    killBuildings = () => {
+        this.props.buildings.forEach(b => b.kill())
+        this.props.removeBuildings()
     }
 
     // moved from map component

@@ -50,7 +50,7 @@ export default class Map extends React.Component<void, Props, void> {
                             <Button color='warning' onClick={this.deletePlatform}>Remove Platform</Button>
                             <Button color='info'  onClick={this.startEnter}>Enter</Button>
                             <Button color='info' onClick={this.startExit}>Exit</Button>
-                            <Button color='success' onClick={this.props.completeConstruction}>Complete construction</Button>
+                            <Button color='success' onClick={this.complete}>Complete construction</Button>
                         </ButtonGroup>
                         {/*<p>click twice to finish enter or exit</p>*/}
                     </div>
@@ -115,5 +115,10 @@ export default class Map extends React.Component<void, Props, void> {
             m.event.addListener(path, 'set_at', updatePolygon)
             m.event.addListener(path, 'remove_at', updatePolygon)
         })
+    }
+
+    complete = () => {
+        this.platform.setOptions({editable: false, draggable: false})
+        this.props.completeConstruction()
     }
 }

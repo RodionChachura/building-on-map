@@ -94,6 +94,6 @@ export default class JsonView extends React.Component<void, Props, State> {
         p.forEach(n => {
             console.info(n.inXYRelatively(origin))
         })
-        map.setZoom(16)
+        map.setZoom(14)
     }
 }
