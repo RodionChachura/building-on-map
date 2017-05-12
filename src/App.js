@@ -23,7 +23,7 @@ class App extends Component {
               <Manager />
             </div>
           </Row>
-          <Row>
+          <Row className={'justify-content-center'}>
             <JsonView />
           </Row>
         </Container>
