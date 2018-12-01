@@ -3,7 +3,6 @@ import {Provider} from 'react-redux'
 import {Row, Container} from 'reactstrap'
 
 import store from './store'
-// import JsonView from './jsonview/container'
 import Map from './map/container'
 import Manager from './manager/container'
 import JsonView from './jsonview/container'
